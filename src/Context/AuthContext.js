@@ -3,7 +3,6 @@ import { auth } from "../Firebase"
 const AuthContext = React.createContext()
 
 export function useAuth() {
-    console.log("Hello");
   return useContext(AuthContext)
 }
 
@@ -16,7 +15,6 @@ export function AuthProvider({ children }) {
   }
 
   function login(email, password) {
-    console.log("Hello from login");
     return auth.signInWithEmailAndPassword(email, password)
   }
 

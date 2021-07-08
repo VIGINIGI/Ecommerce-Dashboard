@@ -26,10 +26,11 @@ import {NotificationContainer} from 'react-notifications';
 import 'react-notifications/lib/notifications.css';
 import AdminLayout from "layouts/Admin.js";
 import AuthLayout from "layouts/Auth.js";
+import { AuthProvider } from "Context/AuthContext";
 
 ReactDOM.render(
   <React.StrictMode>
-
+    <AuthProvider>
   <BrowserRouter>
     <Switch>
       
@@ -39,7 +40,8 @@ ReactDOM.render(
     </Switch>
   </BrowserRouter>,
   <NotificationContainer/>
-
+  </AuthProvider>
+  
   </React.StrictMode>,
   document.getElementById("root")
 );

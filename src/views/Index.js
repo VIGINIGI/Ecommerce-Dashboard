@@ -24,7 +24,7 @@ import { Card, CardBody, CardTitle, Container, Row, Col } from "reactstrap";
 // core components
 
 import Header from "components/Headers/Header.js";
-
+import Middleware from "Context/middleware";
 
 const Index = () => {
   
@@ -32,6 +32,7 @@ const Index = () => {
     
     <>
       <Header />
+      <Middleware />
       {/* Page content */}
       <div className="header bg-gradient-info pb-0 pt-3 pt-md-3">
         <Container fluid>

@@ -24,16 +24,20 @@ import AdminNavbar from "components/Navbars/AdminNavbar.js";
 import AdminFooter from "components/Footers/AdminFooter.js";
 import Sidebar from "components/Sidebar/Sidebar.js";
 
+
+
 import routes from "routes.js";
 
 const Admin = (props) => {
   const mainContent = React.useRef(null);
   const location = useLocation();
 
+
   React.useEffect(() => {
     document.documentElement.scrollTop = 0;
     document.scrollingElement.scrollTop = 0;
-    mainContent.current.scrollTop = 0;
+    (mainContent.current || {}).scrollTop = 0;
+    // mainContent.current.scrollTop = 0;
   }, [location]);
 
   const getRoutes = (routes) => {
@@ -82,12 +86,14 @@ const Admin = (props) => {
         />
         <Switch>
           {getRoutes(routes)}
+          
           <Redirect from="*" to="/admin/index" />
         </Switch>
         <Container fluid>
           <AdminFooter />
         </Container>
       </div>
+
     </>
   );
 };
