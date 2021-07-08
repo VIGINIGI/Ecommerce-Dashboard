@@ -1,14 +1,15 @@
 import React, { useState } from "react";
+import{ DropdownButton,
+Dropdown,ButtonGroup,} from 'react-bootstrap';
 import {
-    Badge,
+   
     Button,
     Card,
     CardHeader,
     CardFooter,
-    DropdownMenu,
-    DropdownItem,
-    UncontrolledDropdown,
-    DropdownToggle,
+    //DropdownButton,
+    //Dropdown,
+    
    
     Pagination,
     PaginationItem,
@@ -17,12 +18,12 @@ import {
     Table,
     Container,
     Row,
-  
+   
   } from "reactstrap";
   // import CustomModal from "views/Cards/modal";
   import {  Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
 
-const ReqTable = (props) => { 
+const Customer = (props) => { 
   const [modaldetail, setModal] = useState(false);
   const [modaldelievery, setModaldelievery] = useState(false);
   const [status,setstatus]=useState('Default');
@@ -99,17 +100,12 @@ const ReqTable = (props) => {
               <Table className="align-items-center table-flush" responsive>
                 <thead className="thead-light">
                   <tr>
-                    <th scope="col">Request Number</th>
+                    <th scope="col">User Id</th>
                     <th scope="col">UserName</th>
-                    <th scope="col">SetPrice</th>
-                    <th scope="col">PhoneNumber</th>
-                    <th scope="col">PaymentMode</th>
-                    <th scope="col">Mobile Name</th>
-                    <th scope="col">Date</th>
-                    <th scope="col">Details</th>
-                    <th scope="col">Status</th>
-                    <th scope="col">AssignDelieveryBoy</th>
-                    <th scope="col" />
+                    <th scope="col">User PhoneNo</th>
+                    <th scope="col">Date Of Registered</th>
+                    <th scope="col">Status </th>
+                    <th scope="col">Action</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -119,76 +115,92 @@ const ReqTable = (props) => {
                           
                     </td>
                     <td>VighneshNaik12</td>
-                    <td>
-                      <Badge color="" className="badge-dot mr-4">
-                        <i className="bg-warning" />
-                        Not Decided
-                      </Badge>
-                    </td>
+                    
                     <td>
                       99********
                     </td>
                     <td>
-                      Online/COD
+                      7/7/21
                     </td>
                     <td >
-                      Realme1
+                    <div>
+    {[DropdownButton].map((DropdownType, idx) => (
+      <DropdownType
+        as={ButtonGroup}
+        key={idx}
+        id={`dropdown-button-drop-${idx}`}
+        size="sm"
+        variant="primary"
+        title="Status"
+      >
+        <Dropdown.Item eventKey="1">Blocked </Dropdown.Item>
+        <Dropdown.Item eventKey="2">UnBlocked</Dropdown.Item>
+       
+        
+      </DropdownType>
+    ))}
+  </div>
                     </td>
                     <td>
-                      23/7/2021  
+                    <ul className="list-inline m-0">
+        <li className="list-inline-item">
+          <button className="btn btn-primary btn-sm rounded-0" type="button" data-toggle="tooltip" data-placement="top" title="Info"><i className="fa fa-info" /></button>
+        </li>
+        <li className="list-inline-item">
+          <button className="btn btn-success btn-sm rounded-0" type="button" data-toggle="tooltip" data-placement="top" title="Edit"><i className="fa fa-edit" /></button>
+        </li>
+        <li className="list-inline-item">
+          <button className="btn btn-danger btn-sm rounded-0" type="button" data-toggle="tooltip" data-placement="top" title="Delete"><i className="fa fa-trash" /></button>
+        </li>
+      </ul>
                     </td>
-                    <td>
-                    <Button
-                      color="primary"
-                      
-                      onClick={toggle}
-                      size="sm"
-                    >Show Details</Button>
-                    </td>
-                    <td>
-                    <UncontrolledDropdown>
-                        <DropdownToggle
-                          
-                          href="#pablo"
-                          role="button"
-                          size="sm"
-                          color=""
-                          onClick={(e) => e.preventDefault()}
-                        >
-                          {status}
-                          {/* <i className="fas fa-ellipsis-v" /> */}
-                        </DropdownToggle>
-                        <DropdownMenu className="dropdown-menu-arrow" right>
-                          <DropdownItem
-                            href="#pablo"
-                            onClick={()=>setstatus('Pending')}
-                          >
-                            Pending
-                          </DropdownItem>
-                          <DropdownItem
-                            href="#pablo"
-                            onClick={()=>setstatus('Accepted')}
-                          >
-                            Accepted
-                          </DropdownItem>
-                          <DropdownItem
-                            href="#pablo"
-                            onClick={()=>setstatus('Cancelled')}
-                          >
-                            Cancelled
-                          </DropdownItem>
-                        </DropdownMenu>
-                      </UncontrolledDropdown>
-                    </td>
-                    <td>
-                    <Button
-                      color="primary"
-                      
-                      onClick={toggledelievery}
-                      size="sm"
-                    >Show Details</Button>
                     
+                  </tr>
+                  <tr>
+                    <td>
+                      1234
+                          
                     </td>
+                    <td>VighneshNaik12</td>
+                    
+                    <td>
+                      99********
+                    </td>
+                    <td>
+                      7/7/21
+                    </td>
+                    <td >
+                    <div>
+    {[DropdownButton].map((DropdownType, idx) => (
+      <DropdownType
+        as={ButtonGroup}
+        key={idx}
+        id={`dropdown-button-drop-${idx}`}
+        size="sm"
+        variant="primary"
+        title="Status"
+      >
+        <Dropdown.Item eventKey="1">Blocked</Dropdown.Item>
+        <Dropdown.Item eventKey="2">UnBlocked</Dropdown.Item>
+        
+      </DropdownType>
+    ))}
+  </div>
+                   </td>
+                    <td>
+                    <ul className="list-inline m-0">
+        <li className="list-inline-item">
+          <button className="btn btn-primary btn-sm rounded-0" type="button" data-toggle="tooltip" data-placement="top" title="Info"><i className="fa fa-info" /></button>
+        </li>
+        <li className="list-inline-item">
+          <button className="btn btn-success btn-sm rounded-0" type="button" data-toggle="tooltip" data-placement="top" title="Edit"><i className="fa fa-edit" /></button>
+        </li>
+        <li className="list-inline-item">
+          <button className="btn btn-danger btn-sm rounded-0" type="button" data-toggle="tooltip" data-placement="top" title="Delete"><i className="fa fa-trash" /></button>
+        </li>
+      </ul>
+                    </td>
+                    
                   </tr>
                   
                 </tbody>
@@ -251,4 +263,4 @@ const ReqTable = (props) => {
         </>
     );
 }
-export default ReqTable;
+export default Customer;

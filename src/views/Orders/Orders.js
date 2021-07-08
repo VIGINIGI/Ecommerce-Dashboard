@@ -17,12 +17,12 @@ import {
     Table,
     Container,
     Row,
-  
+   
   } from "reactstrap";
   // import CustomModal from "views/Cards/modal";
   import {  Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
 
-const ReqTable = (props) => { 
+const Orders = (props) => { 
   const [modaldetail, setModal] = useState(false);
   const [modaldelievery, setModaldelievery] = useState(false);
   const [status,setstatus]=useState('Default');
@@ -251,4 +251,4 @@ const ReqTable = (props) => {
         </>
     );
 }
-export default ReqTable;
+export default Orders;
