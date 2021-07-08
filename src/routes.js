@@ -16,13 +16,14 @@
 
 */
 import Index from "views/Index.js";
-import Profile from "views/examples/Profile.js";
-import Maps from "views/examples/Maps.js";
-import Register from "views/examples/Register.js";
+import Customer from "views/examples/Customer.js";
 import Login from "views/examples/Login.js";
-import Tables from "views/examples/Tables.js";
-import Icons from "views/examples/Icons.js";
+import SellRequest from "views/examples/SellRequest";
 import RepairRequest from "views/examples/RepairRequest.js";
+import Products from "views/examples/Products";
+import ProductCat from "views/examples/ProductCat";
+import Order from "views/examples/Orders";
+import Delivery from "views/examples/DeliveryBoy";
 var routes = [
   {
     path: "/index",
@@ -31,32 +32,12 @@ var routes = [
     component: Index,
     layout: "/admin",
   },
+  
   {
-    path: "/icons",
-    name: "Icons",
-    icon: "ni ni-planet text-blue",
-    component: Icons,
-    layout: "/admin",
-  },
-  {
-    path: "/maps",
-    name: "Maps",
-    icon: "ni ni-pin-3 text-orange",
-    component: Maps,
-    layout: "/admin",
-  },
-  {
-    path: "/user-profile",
-    name: "User Profile",
-    icon: "ni ni-single-02 text-yellow",
-    component: Profile,
-    layout: "/admin",
-  },
-  {
-    path: "/tables",
-    name: "Tables",
+    path: "/SellRequest",
+    name: "SellRequest",
     icon: "ni ni-bullet-list-67 text-red",
-    component: Tables,
+    component: SellRequest,
     layout: "/admin",
   },
   {
@@ -67,18 +48,48 @@ var routes = [
     layout: "/admin",
   },
   {
+    path: "/Customer",
+    name: "Customer",
+    icon: "ni ni-circle-08 text-pink",
+    component: Customer,
+    layout: "/admin",
+  },
+  {
+    path: "/Products",
+    name: "Products",
+    icon: "ni ni-shop text-blue",
+    component: Products,
+    layout: "/admin",
+  },
+  {
+    path: "/ProductCategories",
+    name: "Product Categories",
+    icon: "ni ni-shop text-blue",
+    component: ProductCat,
+    layout: "/admin",
+  },
+  {
+    path: "/Orders",
+    name: "Orders",
+    icon: "ni ni-cart",
+    component: Order,
+    layout: "/admin",
+  },
+  {
+    path: "/DeliveryBoy",
+    name: "Delivery Boy",
+    icon: "ni ni-delivery-fast",
+    component: Delivery,
+    layout: "/admin",
+  },
+  
+  {
     path: "/login",
     name: "Login",
     icon: "ni ni-key-25 text-info",
     component: Login,
     layout: "/auth",
   },
-  {
-    path: "/register",
-    name: "Register",
-    icon: "ni ni-circle-08 text-pink",
-    component: Register,
-    layout: "/auth",
-  },
+  
 ];
 export default routes;
