@@ -15,8 +15,8 @@
 * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 
 */
-import React from "react";
-
+import React,{ useRef, useState } from "react";
+import { NotificationManager} from 'react-notifications';
 // reactstrap components
 import {
   Button,
@@ -33,7 +33,40 @@ import {
   Col,
 } from "reactstrap";
 
+import { useAuth } from "Context/AuthContext";
+import { Link, useHistory } from "react-router-dom";
 const Login = () => {
+  const emailRef = useRef()
+  const passwordRef = useRef()
+
+  const [email, setemail] = useState("")
+  const [password, setpassword] = useState("")
+  const { login } = useAuth()
+  const [error, setError] = useState("")
+  // const [loading, setLoading] = useState(false)
+  const history = useHistory()
+
+  async function handleSubmit(e) {
+    e.preventDefault()
+    console.log(email);
+    try {
+      setError("")
+      // setLoading(true)
+      await login(email, password)
+      console.log("Logged in");
+
+      history.push("/admin")
+    } catch {
+      console.log("Failed to login");
+      NotificationManager.error ('Failed to login');
+      setError("Failed to log in")
+    }
+
+    // setLoading(false)
+  }
+
+
+
   return (
     <>
       <Col lg="5" md="7">
@@ -83,7 +116,7 @@ const Login = () => {
             <div className="text-center text-muted mb-4">
               <small>Or sign in with credentials</small>
             </div>
-            <Form role="form">
+            <Form role="form" onSubmit={handleSubmit}>
               <FormGroup className="mb-3">
                 <InputGroup className="input-group-alternative">
                   <InputGroupAddon addonType="prepend">
@@ -95,6 +128,8 @@ const Login = () => {
                     placeholder="Email"
                     type="email"
                     autoComplete="new-email"
+                    onChange={e => setemail(e.target.value)}
+                    ref={emailRef}
                   />
                 </InputGroup>
               </FormGroup>
@@ -109,6 +144,9 @@ const Login = () => {
                     placeholder="Password"
                     type="password"
                     autoComplete="new-password"
+                    onChange={e => setpassword(e.target.value)}
+
+                    ref={passwordRef}
                   />
                 </InputGroup>
               </FormGroup>
@@ -126,7 +164,7 @@ const Login = () => {
                 </label>
               </div>
               <div className="text-center">
-                <Button className="my-4" color="primary" type="button">
+                <Button className="my-4" color="primary" type="submit">
                   Sign in
                 </Button>
               </div>

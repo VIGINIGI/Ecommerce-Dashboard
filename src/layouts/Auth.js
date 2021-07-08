@@ -19,7 +19,7 @@ import React from "react";
 import { useLocation, Route, Switch, Redirect } from "react-router-dom";
 // reactstrap components
 import { Container, Row, Col } from "reactstrap";
-
+import { AuthProvider } from "Context/AuthContext";
 // core components
 import AuthNavbar from "components/Navbars/AuthNavbar.js";
 import AuthFooter from "components/Footers/AuthFooter.js";
@@ -93,7 +93,8 @@ const Auth = (props) => {
           </div>
         </div>
         {/* Page content */}
-        <Container className="mt--8 pb-5">
+        <AuthProvider>
+         <Container className="mt--8 pb-5">
           <Row className="justify-content-center">
             <Switch>
               {getRoutes(routes)}
@@ -101,6 +102,8 @@ const Auth = (props) => {
             </Switch>
           </Row>
         </Container>
+        </AuthProvider>
+ 
       </div>
       <AuthFooter />
     </>
