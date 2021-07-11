@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import { data } from "jquery";
+import React, { useState,useEffect } from "react";
 import {
     Badge,
     Button,
@@ -21,6 +22,7 @@ import {
   } from "reactstrap";
   // import CustomModal from "views/Cards/modal";
   import {  Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
+  import {db} from "../../Firebase";
 
 const ReqTable = (props) => { 
   const [modaldetail, setModal] = useState(false);
@@ -28,6 +30,32 @@ const ReqTable = (props) => {
   const [status,setstatus]=useState('Default');
  const toggle = () =>  setModal(!modaldetail);  
  const toggledelievery = () =>  setModaldelievery(!modaldelievery); 
+  const [tabledata, settabledata]= useState([]);
+  const [tdata,settdata] = useState();
+ useEffect( () => {
+   console.log("Props:",props.data);
+
+   settabledata([...tabledata,props.data[0]]);   
+
+ },[]);
+async function savedata(){
+  
+  console.log("saving:",props.data[0]);
+  const data= props.data[0];
+  
+  
+  console.log("State:",tabledata);
+  await db.collection("RepairRequest").doc().set(
+    tabledata[0]
+)
+.then(() => {
+    console.log("Document successfully written!");
+})
+.catch((error) => {
+    console.error("Error writing document: ", error);
+});
+}
+ 
     return(  
         <>
         <div>
@@ -88,7 +116,7 @@ const ReqTable = (props) => {
                     <Button
                       color="primary"
                       href="#pablo"
-                      onClick={(e) => e.preventDefault()}
+                      onClick={(e) => savedata()}
                       size="sm"
                     >
                       SAVE
@@ -113,12 +141,13 @@ const ReqTable = (props) => {
                   </tr>
                 </thead>
                 <tbody>
+                  {props.data && props.data.map(data=> {return(
                   <tr>
                     <td>
-                      1234
+                      {data.requestif}
                           
                     </td>
-                    <td>VighneshNaik12</td>
+                    <td>{data.username}</td>
                     <td>
                       <Badge color="" className="badge-dot mr-4">
                         <i className="bg-warning" />
@@ -126,7 +155,7 @@ const ReqTable = (props) => {
                       </Badge>
                     </td>
                     <td>
-                      99********
+                      {data.phonenumber}
                     </td>
                     <td>
                       Online/COD
@@ -191,6 +220,8 @@ const ReqTable = (props) => {
                     </td>
                   </tr>
                   
+                  )})}
+
                 </tbody>
               </Table>
               <CardFooter className="py-4">

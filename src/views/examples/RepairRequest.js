@@ -17,6 +17,7 @@ import {
     Table,
     Container,
     Row,
+    Spinner,
     UncontrolledTooltip,
   } from "reactstrap";
   import CardDetail from "views/Cards/CardDetail";
@@ -31,26 +32,44 @@ import {
 
 
     const [repairdata, setrepairdata] = useState([]);
-    
 
 
-    useEffect( () => {
+
+    useEffect(  () => {
       (async ()=>{
       const response= db.collection('RepairRequest');
       const data=await response.get();
-      const arraydata=data.docs
+      console.log("data.docs",data.docs);
+      const arraydata=data.docs;
       arraydata.forEach(item=>{
         console.log(item.data());
-        setrepairdata([...repairdata,item.data()])
+        //  setrepairdata([...repairdata,item.data()]);
+         setrepairdata(state => [...state, item.data()]);
+        
         
        })
       
-      })()  
-    });
-    return (
+      })() 
+    },[]);
+    // async function savedata(){
+    //   await db.collection("RepairRequest").doc().set({
+    //     repairdata
+    // })
+    // .then(() => {
+    //     console.log("Document successfully written!");
+    // })
+    // .catch((error) => {
+    //     console.error("Error writing document: ", error);
+    // });
+    // }
+    return repairdata.length ?  
+    
+    
+    (
         <>
         {/* Cards above Table */}
         <>
+        {console.log("repairRequest:",repairdata)}
       <div className="header bg-gradient-info pb-8 pt-5 pt-md-8">
         <Container fluid>
           <div className="header-body">
@@ -179,10 +198,20 @@ import {
       </div>
     </>
     {/* ****************************************************Table ****************************************** */}
-    <ReqTable/>
+    
+     <ReqTable data={repairdata} />
         
           </>
-    );
+    ):   
+    <div>
+    <span>Loading Data...</span>
+
+    <Spinner color="success" />
+    <Spinner color="success" />
+    <Spinner color="success" />
+    <Spinner color="success" />
+    <Spinner color="success" />
+    </div>
 
   }
   export default RepairRequest;
