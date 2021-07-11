@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect,useState } from "react";
 import {
     Badge,
     Button,
@@ -23,7 +23,30 @@ import {
   import Header from "components/Headers/Header.js";
   import {  CardBody, CardTitle,  Col } from "reactstrap";
   import ReqTable from "views/RepairRequest/ReqTable";
+
+  //Database
+  import {db} from "../../Firebase";
+
   const RepairRequest = () => {
+
+
+    const [repairdata, setrepairdata] = useState([]);
+    
+
+
+    useEffect( () => {
+      (async ()=>{
+      const response= db.collection('RepairRequest');
+      const data=await response.get();
+      const arraydata=data.docs
+      arraydata.forEach(item=>{
+        console.log(item.data());
+        setrepairdata([...repairdata,item.data()])
+        
+       })
+      
+      })()  
+    });
     return (
         <>
         {/* Cards above Table */}
