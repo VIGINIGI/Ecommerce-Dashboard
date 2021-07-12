@@ -33,32 +33,52 @@ const ReqTable = (props) => {
   const [tabledata, settabledata]= useState([]);
   const [tdata,settdata] = useState();
  useEffect( () => {
+   if( tabledata.length==0){
    console.log("Props:",props.data);
-
-   settabledata([...tabledata,props.data[0]]);   
+   props.data.forEach(item=>{
+    //  setrepairdata([...repairdata,item.data()]);
+     settabledata(state => [...state, item]);
+    
+    
+   })
+  }
+     
 
  },[]);
+// async function adddata(){
+  
+//   console.log("saving:",props.data[0]);
+//   const data= tabledata[0];
+  
+  
+//   console.log("State:",tabledata);
+//   await db.collection("RepairRequest").doc().set(
+//     tabledata[0]
+// )
+// .then(() => {
+//     console.log("Document successfully written!");
+// })
+// .catch((error) => {
+//     console.error("Error writing document: ", error);
+// });
+// }
 async function savedata(){
-  
-  console.log("saving:",props.data[0]);
-  const data= props.data[0];
-  
-  
-  console.log("State:",tabledata);
-  await db.collection("RepairRequest").doc().set(
-    tabledata[0]
+tabledata.map((data, index)=> {
+ db.collection("RepairRequest").doc(data.ID).update(
+  data.tabledata
 )
 .then(() => {
-    console.log("Document successfully written!");
+  console.log("Document successfully updated!");
+}).catch((error) => {
+      console.error("Error writing document: ", error);
+  });
 })
-.catch((error) => {
-    console.error("Error writing document: ", error);
-});
 }
  
     return(  
         <>
         <div>
+          
       {/* <Button color="danger" onClick={toggle}>{buttonLabel}</Button> */}
       <Modal isOpen={modaldetail} toggle={toggle} >
         <ModalHeader toggle={toggle}>Modal title</ModalHeader>
@@ -86,7 +106,11 @@ async function savedata(){
         </ModalFooter>
       </Modal>
     </div>
-
+    <Button
+                      color="primary"
+                      size="sm"
+                      onClick={()=>{console.log(tabledata)}}
+                    >State</Button>
         <Container className="mt--7" fluid>
         <div className="col">
           
@@ -141,30 +165,36 @@ async function savedata(){
                   </tr>
                 </thead>
                 <tbody>
-                  {props.data && props.data.map(data=> {return(
+                  {tabledata && tabledata.map((data, index)=> {
+                    data=data.tabledata;
+                    return(
                   <tr>
                     <td>
-                      {data.requestif}
+                      {data.requestid}
                           
                     </td>
                     <td>{data.username}</td>
                     <td>
-                      <Badge color="" className="badge-dot mr-4">
-                        <i className="bg-warning" />
-                        Not Decided
-                      </Badge>
+                      {data.setprice==="Not Decided"? 
+                      <Button
+                      color="primary"
+                      size="sm"
+                    >Set Price</Button>: data.setprice
+
+                    }
+
                     </td>
                     <td>
                       {data.phonenumber}
                     </td>
                     <td>
-                      Online/COD
+                      {data.paymentmode}
                     </td>
                     <td >
-                      Realme1
+                      {data.mobilename}
                     </td>
                     <td>
-                      23/7/2021  
+                      {data.Date}
                     </td>
                     <td>
                     <Button
@@ -184,25 +214,37 @@ async function savedata(){
                           color=""
                           onClick={(e) => e.preventDefault()}
                         >
-                          {status}
+                          {data.status}
                           {/* <i className="fas fa-ellipsis-v" /> */}
                         </DropdownToggle>
                         <DropdownMenu className="dropdown-menu-arrow" right>
                           <DropdownItem
                             href="#pablo"
-                            onClick={()=>setstatus('Pending')}
+                            onClick={()=>{
+                              let temp = [...tabledata];     // create the copy of state array
+                              temp[index].tabledata.status = 'Pending';                  //new value
+                              settabledata(temp);
+                            }}
                           >
                             Pending
                           </DropdownItem>
                           <DropdownItem
                             href="#pablo"
-                            onClick={()=>setstatus('Accepted')}
+                            onClick={()=>{
+                              let temp = [...tabledata];     // create the copy of state array
+                              temp[index].tabledata.status = 'Accepted';                  //new value
+                              settabledata(temp);
+                            }}
                           >
                             Accepted
                           </DropdownItem>
                           <DropdownItem
                             href="#pablo"
-                            onClick={()=>setstatus('Cancelled')}
+                            onClick={()=>{
+                              let temp = [...tabledata];     // create the copy of state array
+                              temp[index].tabledata.status = 'Cancelled';                  //new value
+                              settabledata(temp);
+                            }}
                           >
                             Cancelled
                           </DropdownItem>

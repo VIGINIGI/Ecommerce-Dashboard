@@ -32,24 +32,29 @@ import {
 
 
     const [repairdata, setrepairdata] = useState([]);
-
+    const [totalrows,settotalrows]=useState(0);
 
 
     useEffect(  () => {
+      if(repairdata.length==0){
       (async ()=>{
       const response= db.collection('RepairRequest');
       const data=await response.get();
-      console.log("data.docs",data.docs);
+      // console.log("data.docs",data.docs);
       const arraydata=data.docs;
+      console.log("Testing:",arraydata);
+      settotalrows(arraydata.length);
       arraydata.forEach(item=>{
-        console.log(item.data());
+        console.log(item.id);
+        let tabledata=item.data();
         //  setrepairdata([...repairdata,item.data()]);
-         setrepairdata(state => [...state, item.data()]);
+         setrepairdata(state => [...state, {tabledata,"ID":item.id}]);
         
         
        })
       
       })() 
+    }
     },[]);
     // async function savedata(){
     //   await db.collection("RepairRequest").doc().set({
@@ -62,7 +67,7 @@ import {
     //     console.error("Error writing document: ", error);
     // });
     // }
-    return repairdata.length ?  
+    return repairdata.length==totalrows && repairdata.length!=0  ?  
     
     
     (
