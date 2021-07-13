@@ -1,8 +1,8 @@
-import React from "react";
+import React,{ useEffect,useState } from "react";
 import {
    
     Card,
-    
+    Spinner,
     Container,
     Row,
    
@@ -11,8 +11,34 @@ import {
   //import Header from "components/Headers/Header.js";
   import {  CardBody, CardTitle,  Col } from "reactstrap";
   import SellReq from "views/SellRequest/SellReq";
+  import {db} from "../../Firebase";
   const SellRequest = () => {
-    return (
+    const [selldata, setselldata] = useState([]);
+    const [totalrows,settotalrows]=useState(0);
+    useEffect(  () => {
+      if(selldata.length==0){
+      (async ()=>{
+      const response= db.collection('SellRequest');
+      const data=await response.get();
+      // console.log("data.docs",data.docs);
+      const arraydata=data.docs;
+      console.log("Testing:",arraydata);
+      settotalrows(arraydata.length);
+      arraydata.forEach(item=>{
+        console.log(item.id);
+        let tabledata=item.data();
+        //  setrepairdata([...repairdata,item.data()]);
+         setselldata(state => [...state, {tabledata,"ID":item.id}]);
+        
+        
+       })
+      
+      })() 
+    }
+    },[]);
+    return selldata.length==totalrows && selldata.length!=0  ? 
+
+    (
         <>
         {/* Cards above Table */}
         <>
@@ -144,10 +170,19 @@ import {
       </div>
     </>
     {/* ****************************************************Table ****************************************** */}
-    <SellReq/>
+    <SellReq data={selldata}/>
         
           </>
-    );
+    ):
+    <div>
+    <span>Loading Data...</span>
+
+    <Spinner color="success" />
+    <Spinner color="success" />
+    <Spinner color="success" />
+    <Spinner color="success" />
+    <Spinner color="success" />
+    </div>
 
   }
   export default SellRequest;

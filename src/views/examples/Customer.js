@@ -1,8 +1,8 @@
-import React from "react";
+import React,{ useEffect,useState } from "react";
 import {
    
     Card,
-    
+    Spinner,
     Container,
     Row,
    
@@ -11,8 +11,33 @@ import {
   //import Header from "components/Headers/Header.js";
   import {  CardBody, CardTitle,  Col } from "reactstrap";
 import Customer from "views/Customer/Customer";
+import {db} from "../../Firebase";
   const Custom = () => {
-    return (
+    const [customer, setcustomer] = useState([]);
+    const [totalrows,settotalrows]=useState(0);
+    useEffect(  () => {
+      if(customer.length==0){
+      (async ()=>{
+      const response= db.collection('Customer');
+      const data=await response.get();
+      // console.log("data.docs",data.docs);
+      const arraydata=data.docs;
+      console.log("Testing:",arraydata);
+      settotalrows(arraydata.length);
+      arraydata.forEach(item=>{
+        console.log(item.id);
+        let tabledata=item.data();
+        //  setrepairdata([...repairdata,item.data()]);
+         setcustomer(state => [...state, {tabledata,"ID":item.id}]);
+        
+        
+       })
+      
+      })() 
+    }
+    },[]);
+    return customer.length==totalrows && customer.length!=0  ?  
+     (
         <>
         {/* Cards above Table */}
         <>
@@ -61,10 +86,19 @@ import Customer from "views/Customer/Customer";
       </div>
     </>
     {/* ****************************************************Table ****************************************** */}
-    <Customer/>
+    <Customer  data={customer} />
         
           </>
-    );
+    ):
+    <div>
+    <span>Loading Data...</span>
+
+    <Spinner color="success" />
+    <Spinner color="success" />
+    <Spinner color="success" />
+    <Spinner color="success" />
+    <Spinner color="success" />
+    </div>
 
   }
   export default Custom;
