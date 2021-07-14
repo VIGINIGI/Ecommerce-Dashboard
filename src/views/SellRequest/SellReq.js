@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import { data } from "jquery";
+import React, { useState,useEffect } from "react";
 import {
     Badge,
     Button,
@@ -19,6 +20,7 @@ import {
     Row,
    
   } from "reactstrap";
+  import {db} from "../../Firebase";
   // import CustomModal from "views/Cards/modal";
   import {  Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
 
@@ -28,6 +30,33 @@ const SellReq = (props) => {
   const [status,setstatus]=useState('Default');
  const toggle = () =>  setModal(!modaldetail);  
  const toggledelievery = () =>  setModaldelievery(!modaldelievery); 
+ const [tabledata, settabledata]= useState([]);
+  const [tdata,settdata] = useState();
+  useEffect( () => {
+    if( tabledata.length==0){
+    console.log("Props:",props.data);
+    props.data.forEach(item=>{
+     
+      settabledata(state => [...state, item]);
+     
+     
+    })
+   }
+      
+ 
+  },[]);
+  async function savedata(){
+    tabledata.map((data, index)=> {
+     db.collection("SellRequest").doc(data.ID).update(
+      data.tabledata
+    )
+    .then(() => {
+      console.log("Document successfully updated!");
+    }).catch((error) => {
+          console.error("Error writing document: ", error);
+      });
+    })
+    }
     return(  
         <>
         <div>
@@ -58,6 +87,11 @@ const SellReq = (props) => {
         </ModalFooter>
       </Modal>
     </div>
+    <Button
+                      color="primary"
+                      size="sm"
+                      onClick={()=>{console.log(tabledata)}}
+                    >State</Button>
 
         <Container className="mt--7" fluid>
         <div className="col">
@@ -113,29 +147,36 @@ const SellReq = (props) => {
                   </tr>
                 </thead>
                 <tbody>
+                {tabledata && tabledata.map((data, index)=> {
+                    data=data.tabledata;
+                    return(
                   <tr>
                     <td>
-                      1234
+                      {data.requestid}
                           
                     </td>
-                    <td>VighneshNaik12</td>
+                    <td>{data.username}</td>
                     <td>
-                      <Badge color="" className="badge-dot mr-4">
-                        <i className="bg-warning" />
-                        Not Decided
-                      </Badge>
+                      {data.setprice==="Not Decided"? 
+                      <Button
+                      color="primary"
+                      size="sm"
+                    >Set Price</Button>: data.setprice
+
+                    }
+
                     </td>
                     <td>
-                      99********
+                      {data.phonenumber}
                     </td>
                     <td>
-                      Online/COD
+                      {data.paymentmode}
                     </td>
                     <td >
-                      Realme1
+                      {data.mobilename}
                     </td>
                     <td>
-                      23/7/2021  
+                      {data.Date}
                     </td>
                     <td>
                     <Button
@@ -155,25 +196,37 @@ const SellReq = (props) => {
                           color=""
                           onClick={(e) => e.preventDefault()}
                         >
-                          {status}
+                          {data.status}
                           {/* <i className="fas fa-ellipsis-v" /> */}
                         </DropdownToggle>
                         <DropdownMenu className="dropdown-menu-arrow" right>
                           <DropdownItem
                             href="#pablo"
-                            onClick={()=>setstatus('Pending')}
+                            onClick={()=>{
+                              let temp = [...tabledata];     // create the copy of state array
+                              temp[index].tabledata.status = 'Pending';                  //new value
+                              settabledata(temp);
+                            }}
                           >
                             Pending
                           </DropdownItem>
                           <DropdownItem
                             href="#pablo"
-                            onClick={()=>setstatus('Accepted')}
+                            onClick={()=>{
+                              let temp = [...tabledata];     // create the copy of state array
+                              temp[index].tabledata.status = 'Accepted';                  //new value
+                              settabledata(temp);
+                            }}
                           >
                             Accepted
                           </DropdownItem>
                           <DropdownItem
                             href="#pablo"
-                            onClick={()=>setstatus('Cancelled')}
+                            onClick={()=>{
+                              let temp = [...tabledata];     // create the copy of state array
+                              temp[index].tabledata.status = 'Cancelled';                  //new value
+                              settabledata(temp);
+                            }}
                           >
                             Cancelled
                           </DropdownItem>
@@ -190,6 +243,9 @@ const SellReq = (props) => {
                     
                     </td>
                   </tr>
+                  
+                  )})}
+
                   
                 </tbody>
               </Table>

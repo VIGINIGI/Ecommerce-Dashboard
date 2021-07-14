@@ -4,13 +4,12 @@ import 'firebase/firestore';
 
 
 const app = firebase.initializeApp({
-  // Vighnesh Account
-  // apiKey: "AIzaSyDa5KQ5aeMvz3Xmqoq9_ynoXAIG5qBnGSI",
-  // authDomain: "dashboard-58354.firebaseapp.com",
-  // projectId: "dashboard-58354",
-  // storageBucket: "dashboard-58354.appspot.com",
-  // messagingSenderId: "73069477453",
-  // appId: "1:73069477453:web:c75c05a3bff02ff004a604"
+    // apiKey: "AIzaSyCJZXI2L7CyvZRgTh3wwXbksonU4fM2u1o",
+    // authDomain: "ecommerce-dashboard-dd9c3.firebaseapp.com",
+    // projectId: "ecommerce-dashboard-dd9c3",
+    // storageBucket: "ecommerce-dashboard-dd9c3.appspot.com",
+    // messagingSenderId: "4472431640",
+    // appId: "1:4472431640:web:854121db1a63e265280f6d"
 
   apiKey: "AIzaSyCJZXI2L7CyvZRgTh3wwXbksonU4fM2u1o",
     authDomain: "ecommerce-dashboard-dd9c3.firebaseapp.com",

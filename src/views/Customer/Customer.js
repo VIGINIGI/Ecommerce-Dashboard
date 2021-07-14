@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import { data } from "jquery";
+import React, { useState,useEffect } from "react";
 import{ DropdownButton,
 Dropdown,ButtonGroup,} from 'react-bootstrap';
 import {
@@ -22,6 +23,7 @@ import {
   } from "reactstrap";
   // import CustomModal from "views/Cards/modal";
   import {  Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
+  import {db} from "../../Firebase";
 
 const Customer = (props) => { 
   const [modaldetail, setModal] = useState(false);
@@ -29,6 +31,33 @@ const Customer = (props) => {
   const [status,setstatus]=useState('Default');
  const toggle = () =>  setModal(!modaldetail);  
  const toggledelievery = () =>  setModaldelievery(!modaldelievery); 
+ const [tabledata, settabledata]= useState([]);
+  const [tdata,settdata] = useState();
+  useEffect( () => {
+    if( tabledata.length==0){
+    console.log("Props:",props.data);
+    props.data.forEach(item=>{
+     //  setrepairdata([...repairdata,item.data()]);
+      settabledata(state => [...state, item]);
+     
+     
+    })
+   }
+      
+ 
+  },[]);
+  async function savedata(){
+    tabledata.map((data, index)=> {
+     db.collection("Customer").doc(data.ID).update(
+      data.tabledata
+    )
+    .then(() => {
+      console.log("Document successfully updated!");
+    }).catch((error) => {
+          console.error("Error writing document: ", error);
+      });
+    })
+    }
     return(  
         <>
         <div>
@@ -44,6 +73,7 @@ const Customer = (props) => {
         </ModalFooter>
       </Modal>
     </div>
+   
 
     <div>
       {/* <Button color="danger" onClick={toggle}>{buttonLabel}</Button> */}
@@ -59,6 +89,11 @@ const Customer = (props) => {
         </ModalFooter>
       </Modal>
     </div>
+    <Button
+                      color="primary"
+                      size="sm"
+                      onClick={()=>{console.log(tabledata)}}
+                    >State</Button>
 
         <Container className="mt--7" fluid>
         <div className="col">
@@ -109,18 +144,21 @@ const Customer = (props) => {
                   </tr>
                 </thead>
                 <tbody>
+                {tabledata && tabledata.map((data, index)=> {
+                    data=data.tabledata;
+                    return(
                   <tr>
                     <td>
-                      1234
+                    {data.userid}
                           
                     </td>
-                    <td>VighneshNaik12</td>
+                    <td>{data.username}</td>
                     
                     <td>
-                      99********
+                    {data.phonenumber}
                     </td>
                     <td>
-                      7/7/21
+                    {data.Date}
                     </td>
                     <td >
                     <div>
@@ -156,51 +194,8 @@ const Customer = (props) => {
                     </td>
                     
                   </tr>
-                  <tr>
-                    <td>
-                      1234
-                          
-                    </td>
-                    <td>VighneshNaik12</td>
-                    
-                    <td>
-                      99********
-                    </td>
-                    <td>
-                      7/7/21
-                    </td>
-                    <td >
-                    <div>
-    {[DropdownButton].map((DropdownType, idx) => (
-      <DropdownType
-        as={ButtonGroup}
-        key={idx}
-        id={`dropdown-button-drop-${idx}`}
-        size="sm"
-        variant="primary"
-        title="Status"
-      >
-        <Dropdown.Item eventKey="1">Blocked</Dropdown.Item>
-        <Dropdown.Item eventKey="2">UnBlocked</Dropdown.Item>
-        
-      </DropdownType>
-    ))}
-  </div>
-                   </td>
-                    <td>
-                    <ul className="list-inline m-0">
-       
-        <li className="list-inline-item">
-          <button className="btn btn-success btn-sm rounded-0" type="button" data-toggle="tooltip" data-placement="top" title="Edit"><i className="fa fa-edit" /></button>
-        </li>
-        <li className="list-inline-item">
-          <button className="btn btn-danger btn-sm rounded-0" type="button" data-toggle="tooltip" data-placement="top" title="Delete"><i className="fa fa-trash" /></button>
-        </li>
-      </ul>
-                    </td>
-                    
-                  </tr>
-                  
+                 
+                 )})}
                 </tbody>
               </Table>
               <CardFooter className="py-4">
