@@ -1,4 +1,9 @@
-import React, { useState } from "react";
+import React, { useState,useEffect } from "react";
+import * as FileSaver from 'file-saver';
+
+import * as XLSX from 'xlsx';
+
+
 import{ DropdownButton,
 Dropdown,ButtonGroup,} from 'react-bootstrap';
 import {
@@ -22,13 +27,70 @@ import {
   } from "reactstrap";
   // import CustomModal from "views/Cards/modal";
   import {  Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
+  import {db} from "../../Firebase";
+   
 
-const ProductCategories = (props) => { 
+ 
+  
+const ProductCategories = (props) => {
+  const ExportCSV = ({csvData, fileName}) => {
+
+
+
+    const fileType = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
+
+    const fileExtension = '.xlsx';
+
+
+
+    const exportToCSV = (csvData, fileName) => {
+
+        const ws = XLSX.utils.json_to_sheet(csvData);
+
+        const wb = { Sheets: { 'data': ws }, SheetNames: ['data'] };
+
+        const excelBuffer = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
+
+        const data = new Blob([excelBuffer], {type: fileType});
+
+        FileSaver.saveAs(data, fileName + fileExtension);
+
+    }
+   
+  
   const [modaldetail, setModal] = useState(false);
   const [modaldelievery, setModaldelievery] = useState(false);
   const [status,setstatus]=useState('Default');
  const toggle = () =>  setModal(!modaldetail);  
  const toggledelievery = () =>  setModaldelievery(!modaldelievery); 
+ const [tabledata, settabledata]= useState([]);
+  const [tdata,settdata] = useState();
+  useEffect( () => {
+    if( tabledata.length==0){
+    console.log("Props:",props.data);
+    props.data.forEach(item=>{
+     //  setrepairdata([...repairdata,item.data()]);
+      settabledata(state => [...state, item]);
+     
+     
+    })
+   }
+      
+ 
+  },[]);
+  async function savedata(){
+    tabledata.map((data, index)=> {
+     db.collection("ProductCat").doc(data.ID).update(
+      data.tabledata
+    )
+    .then(() => {
+      console.log("Document successfully updated!");
+    }).catch((error) => {
+          console.error("Error writing document: ", error);
+      });
+    })
+    }
+    
     return(  
         <>
         <div>
@@ -59,6 +121,11 @@ const ProductCategories = (props) => {
         </ModalFooter>
       </Modal>
     </div>
+    <Button
+                      color="primary"
+                      size="sm"
+                      onClick={()=>{console.log(tabledata)}}
+                    >State</Button>
 
         <Container className="mt--7" fluid>
         <div className="col">
@@ -73,7 +140,7 @@ const ProductCategories = (props) => {
                   <Button
                       color="primary"
                       href="#pablo"
-                      onClick={(e) => e.preventDefault()}
+                      onClick={(e) => exportToCSV(csvData,fileName)}
                       size="sm"
                     >
                       Export To Excel
@@ -107,15 +174,18 @@ const ProductCategories = (props) => {
                   </tr>
                 </thead>
                 <tbody>
+                {tabledata && tabledata.map((data, index)=> {
+                    data=data.tabledata;
+                    return(
                   <tr>
                     <td>
-                      1234
+                    {data.CatId}
                           
                     </td>
-                    <td>Mobile</td>
+                    <td> {data.CatName}</td>
                     
                     <td>
-                      5
+                    {data.quantity}
                     </td>
                     
                    
@@ -133,32 +203,7 @@ const ProductCategories = (props) => {
                     </td>
                     
                   </tr>
-                  <tr>
-                    <td>
-                      1234
-                          
-                    </td>
-                    <td>Laptop</td>
-                    
-                    <td>
-                      5
-                    </td>
-                    
-                   
-                    
-                    <td>
-                    <ul className="list-inline m-0">
-       
-        <li className="list-inline-item">
-          <button className="btn btn-success btn-sm rounded-0" type="button" data-toggle="tooltip" data-placement="top" title="Edit"><i className="fa fa-edit" /></button>
-        </li>
-        <li className="list-inline-item">
-          <button className="btn btn-danger btn-sm rounded-0" type="button" data-toggle="tooltip" data-placement="top" title="Delete"><i className="fa fa-trash" /></button>
-        </li>
-      </ul>
-                    </td>
-                    
-                  </tr>
+                   )})}
                   
                   
                 </tbody>
@@ -220,5 +265,6 @@ const ProductCategories = (props) => {
           </Container>
         </>
     );
+}
 }
 export default ProductCategories;
