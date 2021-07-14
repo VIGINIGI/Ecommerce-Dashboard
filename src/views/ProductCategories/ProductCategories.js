@@ -1,7 +1,5 @@
 import React, { useState,useEffect } from "react";
-import * as FileSaver from 'file-saver';
 
-import * as XLSX from 'xlsx';
 
 
 import{ DropdownButton,
@@ -28,34 +26,14 @@ import {
   // import CustomModal from "views/Cards/modal";
   import {  Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
   import {db} from "../../Firebase";
-   
+
 
  
   
 const ProductCategories = (props) => {
-  const ExportCSV = ({csvData, fileName}) => {
+ 
+    
 
-
-
-    const fileType = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
-
-    const fileExtension = '.xlsx';
-
-
-
-    const exportToCSV = (csvData, fileName) => {
-
-        const ws = XLSX.utils.json_to_sheet(csvData);
-
-        const wb = { Sheets: { 'data': ws }, SheetNames: ['data'] };
-
-        const excelBuffer = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
-
-        const data = new Blob([excelBuffer], {type: fileType});
-
-        FileSaver.saveAs(data, fileName + fileExtension);
-
-    }
    
   
   const [modaldetail, setModal] = useState(false);
@@ -140,7 +118,7 @@ const ProductCategories = (props) => {
                   <Button
                       color="primary"
                       href="#pablo"
-                      onClick={(e) => exportToCSV(csvData,fileName)}
+                      onClick={(e) => e.preventDefault()}
                       size="sm"
                     >
                       Export To Excel
@@ -263,8 +241,9 @@ const ProductCategories = (props) => {
             </Card>
           </div>
           </Container>
+         
         </>
     );
 }
-}
+
 export default ProductCategories;
