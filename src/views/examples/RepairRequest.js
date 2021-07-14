@@ -24,7 +24,7 @@ import {
   import Header from "components/Headers/Header.js";
   import {  CardBody, CardTitle,  Col } from "reactstrap";
   import ReqTable from "views/RepairRequest/ReqTable";
-
+  import Middleware from "Context/middleware";
   //Database
   import {db} from "../../Firebase";
 
@@ -74,6 +74,7 @@ import {
         <>
         {/* Cards above Table */}
         <>
+        <Middleware />
         {console.log("repairRequest:",repairdata)}
       <div className="header bg-gradient-info pb-8 pt-5 pt-md-8">
         <Container fluid>

@@ -1,18 +1,51 @@
-import React from "react";
+import React,{useState,useEffect} from "react";
 import {
    
     Card,
-    
+    Spinner,
     Container,
     Row,
    
   } from "reactstrap";
-  import CardDetail from "views/Cards/CardDetail";
-  //import Header from "components/Headers/Header.js";
-  import {  CardBody, CardTitle,  Col } from "reactstrap";
-import DeliveryBoy from "views/DeliveryBoy/DeliveryBoy";
+import CardDetail from "views/Cards/CardDetail";
+//import Header from "components/Headers/Header.js";
+import {  CardBody, CardTitle,  Col } from "reactstrap";
+import DeliveryBoy from "views/DeliveryBoy/DeliveryBoyTable";
+import {db} from "../../Firebase";
+
   const Delivery = () => {
-    return (
+    const [deliveryboydata, setdeliveryboydata] = useState([]);
+    const [totalrows,settotalrows]=useState(0);
+
+
+    useEffect(  () => {
+      if(deliveryboydata.length==0){
+      (async ()=>{
+      const response= db.collection('DeliveryBoy');
+      const data=await response.get();
+      // console.log("data.docs",data.docs);
+      const arraydata=data.docs;
+      console.log("Testing:",arraydata);
+      settotalrows(arraydata.length);
+      arraydata.forEach(item=>{
+        console.log(item.data());
+        let tabledata=item.data();
+        //  setrepairdata([...repairdata,item.data()]);
+         setdeliveryboydata(state => [...state, {tabledata,"ID":item.id}]);
+        
+        
+       })
+      
+      })() 
+    }
+    },[]);
+
+
+
+
+    return deliveryboydata.length==totalrows && deliveryboydata.length!=0  ?
+
+     (
         <>
         {/* Cards above Table */}
         <>
@@ -144,10 +177,21 @@ import DeliveryBoy from "views/DeliveryBoy/DeliveryBoy";
       </div>
     </>
     {/* ****************************************************Table ****************************************** */}
-     <DeliveryBoy/>
+     <DeliveryBoy data={deliveryboydata}/>
         
           </>
-    );
+    ):   
+    <div>
+    <span>Loading Data...</span>
+
+    <Spinner color="success" />
+    <Spinner color="success" />
+    <Spinner color="success" />
+    <Spinner color="success" />
+    <Spinner color="success" />
+    </div>
+
+  
 
   }
   export default Delivery;

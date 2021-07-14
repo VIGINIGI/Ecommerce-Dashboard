@@ -10,11 +10,11 @@ import {
     DropdownItem,
     UncontrolledDropdown,
     DropdownToggle,
-   
+    Input,
     Pagination,
     PaginationItem,
     PaginationLink,
-    
+    InputGroup,
     Table,
     Container,
     Row,
@@ -31,15 +31,13 @@ const ReqTable = (props) => {
  const toggle = () =>  setModal(!modaldetail);  
  const toggledelievery = () =>  setModaldelievery(!modaldelievery); 
   const [tabledata, settabledata]= useState([]);
-  const [tdata,settdata] = useState();
+
  useEffect( () => {
    if( tabledata.length==0){
    console.log("Props:",props.data);
    props.data.forEach(item=>{
     //  setrepairdata([...repairdata,item.data()]);
      settabledata(state => [...state, item]);
-    
-    
    })
   }
      
@@ -153,7 +151,7 @@ tabledata.map((data, index)=> {
                   <tr>
                     <th scope="col">Request Number</th>
                     <th scope="col">UserName</th>
-                    <th scope="col">SetPrice</th>
+                    <th scope="col">Set Price</th>
                     <th scope="col">PhoneNumber</th>
                     <th scope="col">PaymentMode</th>
                     <th scope="col">Mobile Name</th>
@@ -175,13 +173,27 @@ tabledata.map((data, index)=> {
                     </td>
                     <td>{data.username}</td>
                     <td>
-                      {data.setprice==="Not Decided"? 
+                      {/* {data.setprice==="Not Decided"? 
                       <Button
                       color="primary"
                       size="sm"
-                    >Set Price</Button>: data.setprice
-
+                    >Set Price</Button>: data.setprice */}
+                    <div className="width:100px">
+                    <InputGroup>
+                      <Input
+                    placeholder={data.setprice}
+                    className="width:100"
+                    type="text"
+                    onChange={
+                      (e)=>{
+                        let temp = [...tabledata];    
+                        temp[index].tabledata.setprice = e.target.value;                  
+                        settabledata(temp);
+                      }
                     }
+                  />
+                  </InputGroup>
+                  </div>
 
                     </td>
                     <td>

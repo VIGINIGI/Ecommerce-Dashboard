@@ -189,9 +189,7 @@ const Customer = (props) => {
                    </td>
                     <td>
                     <ul className="list-inline m-0">
-        <li className="list-inline-item">
-          <button className="btn btn-primary btn-sm rounded-0" type="button" data-toggle="tooltip" data-placement="top" title="Info"><i className="fa fa-info" /></button>
-        </li>
+       
         <li className="list-inline-item">
           <button className="btn btn-success btn-sm rounded-0" type="button" data-toggle="tooltip" data-placement="top" title="Edit"><i className="fa fa-edit" /></button>
         </li>

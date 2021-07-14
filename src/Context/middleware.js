@@ -7,9 +7,7 @@ const Middleware = (props) => {
     return (
         <div>
         <Switch>
-        {currentUser ? (
-            <Redirect from="*" to="/admin/index" />
-         ) : (
+        {currentUser ? <></> : (
            <Redirect from="*" to="/auth/login" />
           
          )}
