@@ -134,7 +134,7 @@ const ProductCategories = (props) => {
                     <Button
                       color="primary"
                       href="#pablo"
-                      onClick={(e) => e.preventDefault()}
+                      onClick={(e) => savedata()}
                       size="sm"
                     >
                       SAVE

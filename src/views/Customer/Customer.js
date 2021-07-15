@@ -8,9 +8,11 @@ import {
     Card,
     CardHeader,
     CardFooter,
-    //DropdownButton,
-    //Dropdown,
     
+    DropdownMenu,
+    DropdownItem,
+    UncontrolledDropdown,
+    DropdownToggle,
    
     Pagination,
     PaginationItem,
@@ -124,7 +126,7 @@ const Customer = (props) => {
                     <Button
                       color="primary"
                       href="#pablo"
-                      onClick={(e) => e.preventDefault()}
+                      onClick={(e) => savedata()}
                       size="sm"
                     >
                       SAVE
@@ -162,21 +164,42 @@ const Customer = (props) => {
                     </td>
                     <td >
                     <div>
-    {[DropdownButton].map((DropdownType, idx) => (
-      <DropdownType
-        as={ButtonGroup}
-        key={idx}
-        id={`dropdown-button-drop-${idx}`}
-        size="sm"
-        variant="primary"
-        title="Status"
-      >
-        <Dropdown.Item eventKey="1">Blocked </Dropdown.Item>
-        <Dropdown.Item eventKey="2">UnBlocked</Dropdown.Item>
-       
-        
-      </DropdownType>
-    ))}
+                    <UncontrolledDropdown>
+                        <DropdownToggle
+                          
+                          href="#pablo"
+                          role="button"
+                          size="sm"
+                          color=""
+                          onClick={(e) => e.preventDefault()}
+                        >
+                          {data.status}
+                          {/* <i className="fas fa-ellipsis-v" /> */}
+                        </DropdownToggle>
+                        <DropdownMenu className="dropdown-menu-arrow" right>
+                          <DropdownItem
+                            href="#pablo"
+                            onClick={()=>{
+                              let temp = [...tabledata];     // create the copy of state array
+                              temp[index].tabledata.status = 'Active';                  //new value
+                              settabledata(temp);
+                            }}
+                          >
+                            Active
+                          </DropdownItem>
+                          <DropdownItem
+                            href="#pablo"
+                            onClick={()=>{
+                              let temp = [...tabledata];     // create the copy of state array
+                              temp[index].tabledata.status = 'Inactive';                  //new value
+                              settabledata(temp);
+                            }}
+                          >
+                            Inactive
+                          </DropdownItem>
+                          
+                        </DropdownMenu>
+                      </UncontrolledDropdown>
   </div>
                     </td>
                     <td>

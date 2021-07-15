@@ -1,5 +1,6 @@
 import { data } from "jquery";
 import React, { useState,useEffect } from "react";
+import { NotificationManager } from "react-notifications";
 import {
     Badge,
     Button,
@@ -31,7 +32,9 @@ const ReqTable = (props) => {
  const toggle = () =>  setModal(!modaldetail);  
  const toggledelievery = () =>  setModaldelievery(!modaldelievery); 
   const [tabledata, settabledata]= useState([]);
-
+  const [deliveryboydata,setdeliveryboydata]=useState([]);
+  const [totalrows,settotalrows]=useState(0);
+  const [currentindex,setcurrentindex]=useState(0);
  useEffect( () => {
    if( tabledata.length==0){
    console.log("Props:",props.data);
@@ -72,6 +75,25 @@ tabledata.map((data, index)=> {
   });
 })
 }
+// delivery boy
+async function getdeliveryboy(index){
+  setcurrentindex(index);
+  const response= db.collection('DeliveryBoy');
+      const data=await response.get();
+      const arraydata=data.docs;
+      console.log("Testing:",arraydata);
+      settotalrows(arraydata.length);
+      if(arraydata.length != deliveryboydata.length){
+      arraydata.forEach(item=>{
+        console.log(item.id);
+        let tabledata=item.data();
+        //  setrepairdata([...repairdata,item.data()]);
+         setdeliveryboydata(state => [...state, {tabledata,"ID":item.id}]);
+        
+        
+       })
+      }
+  }
  
     return(  
         <>
@@ -89,17 +111,65 @@ tabledata.map((data, index)=> {
         </ModalFooter>
       </Modal>
     </div>
-
+{/* ****************************DELIVERY BOY MODAL*************************************************/}
     <div>
-      {/* <Button color="danger" onClick={toggle}>{buttonLabel}</Button> */}
+      
       <Modal isOpen={modaldelievery} toggle={toggledelievery} >
-        <ModalHeader toggle={toggledelievery}>Modal title</ModalHeader>
+        <ModalHeader toggle={toggledelievery}>Select Delivery Boy</ModalHeader>
         <ModalBody>
-          hi
-          Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+          <>
+          <Table className="align-items-center table-flush" responsive>
+      <thead className="thead-light">
+        <tr>
+          <th>ID</th>
+          <th>Name</th>
+          <th>Contact</th>
+          <th>OrdersDelivered</th>
+          <th></th>
+        </tr> 
+      </thead>
+      <tbody>
+        {deliveryboydata && deliveryboydata.map((data, index)=> {
+          data=data;
+          return( 
+        <tr>
+          <th scope="row">{data.tabledata.id}</th>
+          <td>{data.tabledata.name}</td>
+          <td>{data.tabledata.phone}</td>
+          <td>{data.tabledata.orderdelivered}</td>
+          <td><Button
+                      color="primary"
+                      href="#pablo"
+                      onClick={()=>{
+                        let temp = [...tabledata];    
+                        temp[currentindex].tabledata.deliveryboy = data.ID;                  
+                        settabledata(temp);
+                        
+                        db.collection("RepairRequest").doc(tabledata[currentindex].ID).update(
+                          tabledata[currentindex].tabledata
+                        )
+                        .then(() => {
+                          console.log("Document successfully updated!");
+                          NotificationManager.success("DeliveryBoy Assigned");
+                        }).catch((error) => {
+                              console.error("Error writing document: ", error);
+                              NotificationManager.Error("Error In Delivery Boy Assignment");
+                          });
+                        setModaldelievery(!modaldelievery);
+
+                      }}
+                      size="sm"
+                    >
+                      Assign
+                    </Button></td>
+        </tr>
+        );
+        })}
+        </tbody>
+    </Table>
+        </>
         </ModalBody>
         <ModalFooter>
-          <Button color="primary" onClick={toggledelievery}>Do Something</Button>{' '}
           <Button color="secondary" onClick={toggledelievery}>Cancel</Button>
         </ModalFooter>
       </Modal>
@@ -107,7 +177,7 @@ tabledata.map((data, index)=> {
     <Button
                       color="primary"
                       size="sm"
-                      onClick={()=>{console.log(tabledata)}}
+                      onClick={()=>{console.log("table data:",tabledata,"deliveryboydata:",deliveryboydata)}}
                     >State</Button>
         <Container className="mt--7" fluid>
         <div className="col">
@@ -264,12 +334,19 @@ tabledata.map((data, index)=> {
                       </UncontrolledDropdown>
                     </td>
                     <td>
-                    <Button
+                      {data.deliveryboy!="" ?
+                      <><Badge color="" className="badge-dot mr-4">
+                      <i className="bg-success" />
+                      Assigned
+                    </Badge></>:
+                      <Button
                       color="primary"
                       
-                      onClick={toggledelievery}
+                      onClick={()=>{toggledelievery(); getdeliveryboy(index);}}
                       size="sm"
-                    >Show Details</Button>
+                    >Assign DeliveryBoy</Button>
+                    }
+                    
                     
                     </td>
                   </tr>
