@@ -24,6 +24,7 @@ import {
     Table,
     Container,
     Row,
+    Spinner,
    
   } from "reactstrap";
   // import CustomModal from "views/Cards/modal";
@@ -33,16 +34,20 @@ import { NotificationManager} from 'react-notifications';
 
 const DeliveryBoy = (props) => { 
   const [modaldetail, setModal] = useState(false);
-  const [modaldelievery, setModaldelievery] = useState(false);
+
  const toggle = () =>  setModal(!modaldetail);  
- const toggledelievery = () =>  setModaldelievery(!modaldelievery); 
+ 
  const [popoverOpen, setPopoverOpen] = useState(false);
+ const [popoveredit, setPopoveredit] = useState(false);
+ const togglepopoveredit = () => setPopoveredit(!popoveredit);
+
  const togglepopover = () => setPopoverOpen(!popoverOpen);
  const [tabledata, settabledata]= useState([]);
   const [newdeliveryboy,setnewdeliveryboy]=useState({});
+
+  const [currentindex,setcurrentindex]=useState(0);
  useEffect( () => {
    if( tabledata.length==0){
-   console.log("Props:",props.data);
    props.data.forEach(item=>{
     //  setrepairdata([...repairdata,item.data()]);
      settabledata(state => [...state, item]);
@@ -53,7 +58,10 @@ const DeliveryBoy = (props) => {
  },[]);
  async function handleSubmit(e) {
   e.preventDefault()
-  NotificationManager.success ('Delievery Boy Created');
+  if(newdeliveryboy.phone.length!=10 || newdeliveryboy.password.length<4){
+    NotificationManager.error("Error! \n Enter Correct Phone Number and Stronger Password ");
+    return;
+  }
   console.log(newdeliveryboy);
   newdeliveryboy.orderdelivered=0;
   newdeliveryboy.status="Active";
@@ -64,9 +72,11 @@ const DeliveryBoy = (props) => {
     newdeliveryboy
     )
     .then(() => {
+      NotificationManager.success ('Delievery Boy Created');
         console.log("Document successfully written!");
     })
     .catch((error) => {
+      NotificationManager.error(error);
         console.error("Error writing document: ", error);
     });
 
@@ -79,44 +89,66 @@ async function savedata(){
   )
   .then(() => {
     console.log("Document successfully updated!");
+    NotificationManager.success("Details Saved");
   }).catch((error) => {
         console.error("Error writing document: ", error);
+        NotificationManager.error("Error ",error);
     });
   })
   }
+function showdetail(index){
+  setcurrentindex(index);
+  setModal(!modaldetail);  
 
+}
+async function del(index){
+  db.collection("DeliveryBoy").doc(tabledata[index].ID).delete().then(() => {
+    NotificationManager.success("Deleted")
+}).catch((error) => {
+    NotificationManager.error(error)
+});
+}
+async function edit(index){
+  
+ await db.collection("DeliveryBoy").doc(tabledata[index].ID).update(
+    {
+      "phone":newdeliveryboy.phone,
+      "password":newdeliveryboy.password,
+    }
+  )
+  .then(() => {
+    console.log("Document successfully updated!");
+    NotificationManager.success("Details Saved");
+    setPopoveredit(!popoveredit)
+  }).catch((error) => {
+        console.error("Error writing document: ", error);
+        NotificationManager.error("Error ",error);
+    });
+}
 
-    return(  
+return tabledata.length!=0  ? (
         <>
         <div>
-      {/* <Button color="danger" onClick={toggle}>{buttonLabel}</Button> */}
+  {/* ********************Detail modal*********************************************************************** */}
       <Modal isOpen={modaldetail} toggle={toggle} >
-        <ModalHeader toggle={toggle}>Modal title</ModalHeader>
+        <ModalHeader toggle={toggle}>Detail</ModalHeader>
         <ModalBody>
-          Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+         
+          <>
+          {tabledata[currentindex].tabledata.name}
+          <br></br>
+          {tabledata[currentindex].tabledata.phone}
+          </>
         </ModalBody>
         <ModalFooter>
-          <Button color="primary" onClick={toggle}>Do Something</Button>{' '}
+          
           <Button color="secondary" onClick={toggle}>Cancel</Button>
         </ModalFooter>
       </Modal>
     </div>
 
     <div>
-      {/* <Button color="danger" onClick={toggle}>{buttonLabel}</Button> */}
-      <Modal isOpen={modaldelievery} toggle={toggledelievery} >
-        <ModalHeader toggle={toggledelievery}>Modal title</ModalHeader>
-        <ModalBody>
-          hi
-          Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-        </ModalBody>
-        <ModalFooter>
-          <Button color="primary" onClick={toggledelievery}>Do Something</Button>{' '}
-          <Button color="secondary" onClick={toggledelievery}>Cancel</Button>
-        </ModalFooter>
-      </Modal>
-    </div>
-    <div>
+      {/* *************************To Add Delivery Boy***************************** */}
     <Popover placement="bottom" isOpen={popoverOpen} target="Popover1" toggle={togglepopover}>
         <PopoverHeader>ADD Delivery Boy</PopoverHeader>
         <PopoverBody>
@@ -132,7 +164,6 @@ async function savedata(){
                   <Input
                     placeholder="Phone"
                     type="tel"
-                    pattern="[0-9]{10}" required
                     onChange={(e)=>{newdeliveryboy.phone=e.target.value}}
                   />
                 </InputGroup>
@@ -240,7 +271,44 @@ async function savedata(){
                       {data.orderdelivered}
                     </td>
                     <td >
-                        Success/reject
+                    <UncontrolledDropdown>
+                        <DropdownToggle
+                          
+                          href="#pablo"
+                          role="button"
+                          size="sm"
+                          color=""
+                          onClick={(e) => e.preventDefault()}
+                        >
+                          {data.kycstatus}
+                          {/* <i className="fas fa-ellipsis-v" /> */}
+                        </DropdownToggle>
+                        <DropdownMenu className="dropdown-menu-arrow" right>
+                          <DropdownItem
+                            href="#pablo"
+                            onClick={(e)=>{
+                              e.preventDefault();
+                              let temp = [...tabledata];     // create the copy of state array
+                              temp[index].tabledata.kycstatus = 'Success';                  //new value
+                              settabledata(temp);
+                            }}
+                          >
+                            Success
+                          </DropdownItem>
+                          <DropdownItem
+                            href="#pablo"
+                            onClick={(e)=>{
+                              e.preventDefault();
+                              let temp = [...tabledata];     // create the copy of state array
+                              temp[index].tabledata.kycstatus = 'Rejected';                  //new value
+                              settabledata(temp);
+                            }}
+                          >
+                            Rejected
+                          </DropdownItem>
+                          
+                        </DropdownMenu>
+                      </UncontrolledDropdown>
                     </td>
                     <td>
                     <UncontrolledDropdown>
@@ -258,7 +326,8 @@ async function savedata(){
                         <DropdownMenu className="dropdown-menu-arrow" right>
                           <DropdownItem
                             href="#pablo"
-                            onClick={()=>{
+                            onClick={(e)=>{
+                              e.preventDefault();
                               let temp = [...tabledata];     // create the copy of state array
                               temp[index].tabledata.status = 'Active';                  //new value
                               settabledata(temp);
@@ -268,7 +337,8 @@ async function savedata(){
                           </DropdownItem>
                           <DropdownItem
                             href="#pablo"
-                            onClick={()=>{
+                            onClick={(e)=>{
+                              e.preventDefault();
                               let temp = [...tabledata];     // create the copy of state array
                               temp[index].tabledata.status = 'Blocked';                  //new value
                               settabledata(temp);
@@ -281,13 +351,59 @@ async function savedata(){
                       </UncontrolledDropdown> 
                     </td>
                     <td>
+                      {/* **************************************Delivery Boy********************* */}
+                      <>
+                      <Popover placement="bottom" isOpen={popoveredit} target="Popover2" toggle={togglepopoveredit}>
+                      <PopoverHeader>Edit</PopoverHeader>
+                      <PopoverBody>
+                        
+                      <Form role="form" >
+                            <FormGroup className="mb-3">
+                              <InputGroup className="input-group-alternative">
+                                <InputGroupAddon addonType="prepend">
+                                  <InputGroupText>
+                                    <i className="ni ni-mobile-button" />
+                                  </InputGroupText>
+                                </InputGroupAddon>
+                                <Input
+                                  placeholder={data.phone}
+                                  type="tel"
+                                  pattern= "[0-9]{10}"
+                                  onChange={(e)=>{newdeliveryboy.phone=e.target.value}}
+                                />
+                              </InputGroup>
+                            </FormGroup>
+                            <FormGroup>
+                              <InputGroup className="input-group-alternative">
+                                <InputGroupAddon addonType="prepend">
+                                  <InputGroupText>
+                                    <i className="ni ni-lock-circle-open" />
+                                  </InputGroupText>
+                                </InputGroupAddon>
+                                <Input
+                                  placeholder="Password"
+                                  type="text"
+                                  
+                                  onChange={(e)=>{newdeliveryboy.password=e.target.value}}
+
+                                />
+                              </InputGroup>
+                            </FormGroup>
+                            
+                      
+                      <Button color="primary" size="sm" onClick={togglepopoveredit}>Cancel</Button>
+                      <Button color="primary" size="sm"  onClick={()=>edit(index)}>Add</Button>
+                      </Form>
+                      </PopoverBody>
+                    </Popover>
+                      </>
                     <ul className="list-inline m-0">
                     
                     <li className="list-inline-item">
-                      <button className="btn btn-success btn-sm rounded-0" type="button" data-toggle="tooltip" data-placement="top" title="Edit"><i className="fa fa-edit" /></button>
+                      <button className="btn btn-success btn-sm rounded-0" type="button" id="Popover2"  data-toggle="tooltip" data-placement="top" title="Edit"><i className="fa fa-edit" /></button>
                     </li>
                     <li className="list-inline-item">
-                      <button className="btn btn-danger btn-sm rounded-0" type="button" data-toggle="tooltip" data-placement="top" title="Delete"><i className="fa fa-trash" /></button>
+                      <button className="btn btn-danger btn-sm rounded-0" type="button" data-toggle="tooltip" data-placement="top" title="Delete" onClick={()=>del(index)}><i className="fa fa-trash" /></button>
                     </li>
                     </ul>
                     </td>
@@ -295,7 +411,7 @@ async function savedata(){
                     <Button
                       color="primary"
                       
-                      onClick={toggle}
+                      onClick={()=>showdetail(index)}
                       size="sm"
                     >Show Details</Button>
                     </td>
@@ -360,6 +476,15 @@ async function savedata(){
           </div>
           </Container>
         </>
-    );
+    ):
+    <div>
+    <span>Loading Data...</span>
+
+    <Spinner color="success" />
+    <Spinner color="success" />
+    <Spinner color="success" />
+    <Spinner color="success" />
+    <Spinner color="success" />
+    </div>
 }
 export default DeliveryBoy;

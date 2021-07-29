@@ -25,10 +25,10 @@ import {db} from "../../Firebase";
       const data=await response.get();
       // console.log("data.docs",data.docs);
       const arraydata=data.docs;
-      console.log("Testing:",arraydata);
+      
       settotalrows(arraydata.length);
       arraydata.forEach(item=>{
-        console.log(item.data());
+        
         let tabledata=item.data();
         //  setrepairdata([...repairdata,item.data()]);
          setdeliveryboydata(state => [...state, {tabledata,"ID":item.id}]);

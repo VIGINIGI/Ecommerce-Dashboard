@@ -226,7 +226,7 @@ async function getdeliveryboy(index){
                     <th scope="col">PaymentMode</th>
                     <th scope="col">Mobile Name</th>
                     <th scope="col">Date</th>
-                    <th scope="col">Details</th>
+                    <th scope="col">Details</th>  
                     <th scope="col">Status</th>
                     <th scope="col">AssignDelieveryBoy</th>
                     <th scope="col" />
