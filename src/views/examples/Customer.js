@@ -10,7 +10,7 @@ import {
   import CardDetail from "views/Cards/CardDetail";
   //import Header from "components/Headers/Header.js";
   import {  CardBody, CardTitle,  Col } from "reactstrap";
-import Customer from "views/Customer/Customer";
+import Customer from "views/Customer/CustomerTable";
 import {db} from "../../Firebase";
   const Custom = () => {
     const [customer, setcustomer] = useState([]);

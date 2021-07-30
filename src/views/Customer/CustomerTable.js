@@ -18,24 +18,42 @@ import {
     Pagination,
     PaginationItem,
     PaginationLink,
-    
+    FormGroup,
+    Form,
+    Input,
+    InputGroupAddon,
+    InputGroupText,
+    InputGroup,
     Table,
     Container,
     Row,
+    Popover,
+    PopoverHeader,
+    PopoverBody,
    
   } from "reactstrap";
   // import CustomModal from "views/Cards/modal";
   import {  Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
   import {db} from "../../Firebase";
+  import { NotificationManager} from 'react-notifications';
 
 const Customer = (props) => { 
+  const [popoverOpen, setPopoverOpen] = useState(false);
+  const togglepopover = () => setPopoverOpen(!popoverOpen);
+  const [popoveredit, setPopoveredit] = useState(false);
+  const togglepopoveredit = () => setPopoveredit(!popoveredit);
+
   const [modaldetail, setModal] = useState(false);
-  const [modaldelievery, setModaldelievery] = useState(false);
+  
   const [status,setstatus]=useState('Default');
  const toggle = () =>  setModal(!modaldetail);  
- const toggledelievery = () =>  setModaldelievery(!modaldelievery); 
+
  const [tabledata, settabledata]= useState([]);
   const [tdata,settdata] = useState();
+  const [newcustomer,setnewcustomer]=useState({});
+
+  const [currentindex,setcurrentindex]=useState(0);
+
   useEffect( () => {
     if( tabledata.length==0){
     console.log("Props:",props.data);
@@ -49,22 +67,80 @@ const Customer = (props) => {
       
  
   },[]);
+  async function handleSubmit(e) {
+    e.preventDefault()
+    if(newcustomer.phonenumber.length!=10 || newcustomer.password.length<4){
+      NotificationManager.error("Error! \n Enter Correct Phone Number and Stronger Password ");
+      return;
+    }
+    console.log(newcustomer);
+    
+    newcustomer.status="Active";
+    newcustomer.Date="12/03/21";
+    newcustomer.username="NULL";
+    newcustomer.userid=12;
+      await db.collection("Customer").doc().set(
+      newcustomer
+      )
+      .then(() => {
+        NotificationManager.success ('Customer Created');
+          console.log("Document successfully written!");
+      })
+      .catch((error) => {
+        NotificationManager.error(error);
+          console.error("Error writing document: ", error);
+      });
+  
+    
+  }
   async function savedata(){
     tabledata.map((data, index)=> {
      db.collection("Customer").doc(data.ID).update(
       data.tabledata
     )
     .then(() => {
+      NotificationManager.success("Details Saved")
       console.log("Document successfully updated!");
     }).catch((error) => {
+      NotificationManager.error(error);
           console.error("Error writing document: ", error);
       });
     })
     }
+
+    // function showdetail(index){
+    //   setcurrentindex(index);
+    //   setModal(!modaldetail);  
+    
+    // }
+    async function del(index){
+      db.collection("Customer").doc(tabledata[index].ID).delete().then(() => {
+        NotificationManager.success("Deleted")
+    }).catch((error) => {
+        NotificationManager.error(error)
+    });
+    }
+    // async function edit(index){
+      
+    //  await db.collection("DeliveryBoy").doc(tabledata[index].ID).update(
+    //     {
+    //       "phone":newdeliveryboy.phone,
+    //       "password":newdeliveryboy.password,
+    //     }
+    //   )
+    //   .then(() => {
+    //     console.log("Document successfully updated!");
+    //     NotificationManager.success("Details Saved");
+    //     setPopoveredit(!popoveredit)
+    //   }).catch((error) => {
+    //         console.error("Error writing document: ", error);
+    //         NotificationManager.error("Error ",error);
+    //     });
+    // }
     return(  
         <>
         <div>
-      {/* <Button color="danger" onClick={toggle}>{buttonLabel}</Button> */}
+      {/* *********************************Detail Modal************************************ */}
       <Modal isOpen={modaldetail} toggle={toggle} >
         <ModalHeader toggle={toggle}>Modal title</ModalHeader>
         <ModalBody>
@@ -76,22 +152,53 @@ const Customer = (props) => {
         </ModalFooter>
       </Modal>
     </div>
-   
+   <div>
+     {/* *************************To Add Delivery Boy***************************** */}
+    <Popover placement="bottom" isOpen={popoverOpen} target="Popover1" toggle={togglepopover}>
+        <PopoverHeader>ADD Customer</PopoverHeader>
+        <PopoverBody>
+          
+        <Form role="form" onSubmit={handleSubmit}>
+              <FormGroup className="mb-3">
+                <InputGroup className="input-group-alternative">
+                  <InputGroupAddon addonType="prepend">
+                    <InputGroupText>
+                      <i className="ni ni-mobile-button" />
+                    </InputGroupText>
+                  </InputGroupAddon>
+                  <Input
+                    placeholder="Phone"
+                    type="tel"
+                    onChange={(e)=>{newcustomer.phonenumber=e.target.value}}
+                  />
+                </InputGroup>
+              </FormGroup>
+              <FormGroup>
+                <InputGroup className="input-group-alternative">
+                  <InputGroupAddon addonType="prepend">
+                    <InputGroupText>
+                      <i className="ni ni-lock-circle-open" />
+                    </InputGroupText>
+                  </InputGroupAddon>
+                  <Input
+                    placeholder="Password"
+                    type="text"
+                    
+                    onChange={(e)=>{newcustomer.password=e.target.value}}
 
-    <div>
-      {/* <Button color="danger" onClick={toggle}>{buttonLabel}</Button> */}
-      <Modal isOpen={modaldelievery} toggle={toggledelievery} >
-        <ModalHeader toggle={toggledelievery}>Modal title</ModalHeader>
-        <ModalBody>
-          hi
-          Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-        </ModalBody>
-        <ModalFooter>
-          <Button color="primary" onClick={toggledelievery}>Do Something</Button>{' '}
-          <Button color="secondary" onClick={toggledelievery}>Cancel</Button>
-        </ModalFooter>
-      </Modal>
-    </div>
+                  />
+                </InputGroup>
+              </FormGroup>
+              
+         
+        <Button color="primary" size="sm" onClick={togglepopover}>Cancel</Button>
+        <Button color="primary" size="sm" type="submit" onClick={togglepopover}>Add</Button>
+        </Form>
+        </PopoverBody>
+      </Popover>
+   </div>
+
+   
     <Button
                       color="primary"
                       size="sm"
@@ -108,6 +215,14 @@ const Customer = (props) => {
                     <h3 className="mb-0">Page visits</h3>
                   </div>
                   <div className="col text-right">
+                  <Button
+                      color="primary"
+                      size="sm"
+                      id="Popover1" 
+                      type="button"
+                    >
+                      Add A Customer
+                    </Button>
                   <Button
                       color="primary"
                       href="#pablo"
@@ -215,7 +330,7 @@ const Customer = (props) => {
           <button className="btn btn-success btn-sm rounded-0" type="button" data-toggle="tooltip" data-placement="top" title="Edit"><i className="fa fa-edit" /></button>
         </li>
         <li className="list-inline-item">
-          <button className="btn btn-danger btn-sm rounded-0" type="button" data-toggle="tooltip" data-placement="top" title="Delete"><i className="fa fa-trash" /></button>
+          <button className="btn btn-danger btn-sm rounded-0" type="button" data-toggle="tooltip" data-placement="top" title="Delete" onClick={()=>{del(index)}}><i className="fa fa-trash" /></button>
         </li>
       </ul>
                     </td>
