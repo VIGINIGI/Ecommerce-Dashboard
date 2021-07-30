@@ -8,7 +8,8 @@ import {
     Card,
     CardHeader,
     CardFooter,
-    
+    InputGroup,
+    Input,
     DropdownMenu,
     DropdownItem,
     UncontrolledDropdown,
@@ -150,16 +151,19 @@ const Customer = (props) => {
                     data=data.tabledata;
                     return(
                   <tr>
-                    <td>
+                    <td id="userid">
                     {data.userid}
+
+                   
+                
                           
                     </td>
-                    <td>{data.username}</td>
+                    <td id="username">{data.username}</td>
                     
-                    <td>
+                    <td id="phonenumber">
                     {data.phonenumber}
                     </td>
-                    <td>
+                    <td id="Date">
                     {data.Date}
                     </td>
                     <td >
@@ -205,7 +209,7 @@ const Customer = (props) => {
                     <td>
                     <ul className="list-inline m-0">
         <li className="list-inline-item">
-          <button className="btn btn-primary btn-sm rounded-0" type="button" data-toggle="tooltip" data-placement="top" title="Info"><i className="fa fa-info" /></button>
+          <button className="btn btn-primary btn-sm rounded-0" id="edit_button3" type="button" onClick={(e) =>e.preventDefault} data-toggle="tooltip" data-placement="top" title="Info"><i className="fa fa-info" /></button>
         </li>
         <li className="list-inline-item">
           <button className="btn btn-success btn-sm rounded-0" type="button" data-toggle="tooltip" data-placement="top" title="Edit"><i className="fa fa-edit" /></button>

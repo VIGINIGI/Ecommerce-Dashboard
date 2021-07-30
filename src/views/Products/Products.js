@@ -1,4 +1,8 @@
-import React, { useState } from "react";
+import React,{ useState,useEffect } from "react";
+import { data, event } from "jquery";
+import {db} from "../../Firebase";
+import BootstrapTable from "react-bootstrap-table-next";
+
 import {
     Badge,
     Button,
@@ -28,6 +32,34 @@ const Products= (props) => {
   const [status,setstatus]=useState('Default');
  const toggle = () =>  setModal(!modaldetail);  
  const toggledelievery = () =>  setModaldelievery(!modaldelievery); 
+ const [tabledata, settabledata]= useState([]);
+  const [tdata,settdata] = useState();
+  const[searchTerm,setsearchTerm]=useState("");
+  useEffect( () => {
+    if( tabledata.length==0){
+    console.log("Props:",props.data);
+    props.data.forEach(item=>{
+     //  setrepairdata([...repairdata,item.data()]);
+      settabledata(state => [...state, item]);
+     
+     
+    })
+   }
+      
+ 
+  },[]);
+  async function savedata(){
+    tabledata.map((data, index)=> {
+     db.collection("Product").doc(data.ID).update(
+      data.tabledata
+    )
+    .then(() => {
+      console.log("Document successfully updated!");
+    }).catch((error) => {
+          console.error("Error writing document: ", error);
+      });
+    })
+    }
     return(  
         <>
         <div>
@@ -67,9 +99,24 @@ const Products= (props) => {
               <Row className="align-items-center">
                   <div className="col">
                     <h3 className="mb-0">Page visits</h3>
+                    
                   </div>
-                  <div className="col text-right">
-                  <Button
+                  <input type="text" placeholder="Search.." onChange={(event)=>{
+                    setsearchTerm(event.target.value);
+                  }}/>
+
+                 
+                  
+
+
+                  
+      
+                  
+
+                  <div className="col text-right ">
+                  
+                 
+                  <Button 
                       color="primary"
                       href="#pablo"
                       onClick={(e) => e.preventDefault()}
@@ -77,7 +124,7 @@ const Products= (props) => {
                     >
                       Export To Excel
                     </Button>
-                    <Button
+                    <Button 
                       color="primary"
                       href="#pablo"
                       onClick={(e) => e.preventDefault()}
@@ -85,10 +132,10 @@ const Products= (props) => {
                     >
                       Filter
                     </Button>
-                    <Button
+                    <Button 
                       color="primary"
                       href="#pablo"
-                      onClick={(e) => e.preventDefault()}
+                      onClick={(e) => savedata()}
                       size="sm"
                     >
                       SAVE
@@ -99,53 +146,37 @@ const Products= (props) => {
               <Table className="align-items-center table-flush" responsive>
                 <thead className="thead-light">
                   <tr>
-                    <th scope="col">Request Number</th>
-                    <th scope="col">UserName</th>
-                    <th scope="col">SetPrice</th>
-                    <th scope="col">PhoneNumber</th>
-                    <th scope="col">PaymentMode</th>
-                    <th scope="col">Mobile Name</th>
-                    <th scope="col">Date</th>
-                    <th scope="col">Details</th>
+                    <th scope="col">Product Id</th>
+                    <th scope="col">Product Name</th>
+                    <th scope="col">Product Quantity</th>
+                    <th scope="col">Product Category</th>
                     <th scope="col">Status</th>
-                    <th scope="col">AssignDelieveryBoy</th>
-                    <th scope="col" />
+                    <th scope="col">Action</th>
                   </tr>
                 </thead>
                 <tbody>
+
+
+                {tabledata && tabledata.map((data, index)=> {
+                  
+                    data=data.tabledata;
+                    return(
+                      
                   <tr>
                     <td>
-                      1234
-                          
-                    </td>
-                    <td>VighneshNaik12</td>
-                    <td>
-                      <Badge color="" className="badge-dot mr-4">
-                        <i className="bg-warning" />
-                        Not Decided
-                      </Badge>
+                    {data.ProductID}
                     </td>
                     <td>
-                      99********
+                    {data.name}
                     </td>
                     <td>
-                      Online/COD
-                    </td>
-                    <td >
-                      Realme1
+                    {data.quantity}
                     </td>
                     <td>
-                      23/7/2021  
+                    {data.category}
                     </td>
                     <td>
-                    <Button
-                      color="primary"
-                      
-                      onClick={toggle}
-                      size="sm"
-                    >Show Details</Button>
-                    </td>
-                    <td>
+                    <div>
                     <UncontrolledDropdown>
                         <DropdownToggle
                           
@@ -155,41 +186,50 @@ const Products= (props) => {
                           color=""
                           onClick={(e) => e.preventDefault()}
                         >
-                          {status}
+                          {data.status}
                           {/* <i className="fas fa-ellipsis-v" /> */}
                         </DropdownToggle>
                         <DropdownMenu className="dropdown-menu-arrow" right>
                           <DropdownItem
                             href="#pablo"
-                            onClick={()=>setstatus('Pending')}
+                            onClick={()=>{
+                              let temp = [...tabledata];     // create the copy of state array
+                              temp[index].tabledata.status = 'Active';                  //new value
+                              settabledata(temp);
+                            }}
                           >
-                            Pending
+                            Active
                           </DropdownItem>
                           <DropdownItem
                             href="#pablo"
-                            onClick={()=>setstatus('Accepted')}
+                            onClick={()=>{
+                              let temp = [...tabledata];     // create the copy of state array
+                              temp[index].tabledata.status = 'Inactive';                  //new value
+                              settabledata(temp);
+                            }}
                           >
-                            Accepted
+                            Inactive
                           </DropdownItem>
-                          <DropdownItem
-                            href="#pablo"
-                            onClick={()=>setstatus('Cancelled')}
-                          >
-                            Cancelled
-                          </DropdownItem>
+                          
                         </DropdownMenu>
                       </UncontrolledDropdown>
+  </div>
                     </td>
                     <td>
-                    <Button
-                      color="primary"
-                      
-                      onClick={toggledelievery}
-                      size="sm"
-                    >Show Details</Button>
-                    
+                    <ul className="list-inline m-0">
+        <li className="list-inline-item">
+          <button className="btn btn-primary btn-sm rounded-0" type="button" data-toggle="tooltip" data-placement="top" title="Info"><i className="fa fa-info" /></button>
+        </li>
+        <li className="list-inline-item">
+          <button className="btn btn-success btn-sm rounded-0" type="button" data-toggle="tooltip" data-placement="top" title="Edit"><i className="fa fa-edit" /></button>
+        </li>
+        <li className="list-inline-item">
+          <button className="btn btn-danger btn-sm rounded-0" type="button" data-toggle="tooltip" data-placement="top" title="Delete"><i className="fa fa-trash" /></button>
+        </li>
+      </ul>
                     </td>
                   </tr>
+                    )})}
                   
                 </tbody>
               </Table>

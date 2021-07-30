@@ -11,12 +11,13 @@ const app = firebase.initializeApp({
     // messagingSenderId: "4472431640",
     // appId: "1:4472431640:web:854121db1a63e265280f6d"
 
-  apiKey: "AIzaSyCJZXI2L7CyvZRgTh3wwXbksonU4fM2u1o",
-    authDomain: "ecommerce-dashboard-dd9c3.firebaseapp.com",
-    projectId: "ecommerce-dashboard-dd9c3",
-    storageBucket: "ecommerce-dashboard-dd9c3.appspot.com",
-    messagingSenderId: "4472431640",
-    appId: "1:4472431640:web:854121db1a63e265280f6d"
+    apiKey: "AIzaSyDuAF8zyfzRKdgXf0v1mu7ZrQ_njGNQdkU",
+    authDomain: "jefli-8c48e.firebaseapp.com",
+    projectId: "jefli-8c48e",
+    storageBucket: "jefli-8c48e.appspot.com",
+    messagingSenderId: "197853377653",
+    appId: "1:197853377653:web:fd250d46850a9aa11f743c",
+    measurementId: "G-902GPZZ4CV"
   })
 
 
