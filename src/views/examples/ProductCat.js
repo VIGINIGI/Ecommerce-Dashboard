@@ -10,7 +10,7 @@ import {
   import CardDetail from "views/Cards/CardDetail";
   //import Header from "components/Headers/Header.js";
   import {  CardBody, CardTitle,  Col } from "reactstrap";
-import ProductCategories from "views/ProductCategories/ProductCategories";
+import ProductCategories from "views/ProductCategories/ProductCategoriesTable";
 
 import {db} from "../../Firebase";
   const ProductCat = () => {
@@ -29,10 +29,14 @@ import {db} from "../../Firebase";
       console.log("Testing:",arraydata);
       settotalrows(arraydata.length);
       arraydata.forEach(item=>{
-        console.log(item.id);
-        let tabledata=item.data();
-        //  setrepairdata([...repairdata,item.data()]);
-         setProductCatdata(state => [...state, {tabledata,"ID":item.id}]);
+        
+        db.collection("Product").where('category', '==', item.data().CatName).get().then((value)=>{
+          let tabledata=item.data();
+          tabledata.quantity=value.docs.length;
+          setProductCatdata(state => [...state, {tabledata,"ID":item.id}]);
+        })
+        // let tabledata=item.data();
+        // setProductCatdata(state => [...state, {tabledata,"ID":item.id}]);
         
         
        })
@@ -41,7 +45,7 @@ import {db} from "../../Firebase";
     }
     },[]);
 
-    return ProductCatdata.length==totalrows && ProductCatdata.length!=0  ?  
+    return ProductCatdata.length==totalrows   ?  
     (
         <>
         {/* Cards above Table */}

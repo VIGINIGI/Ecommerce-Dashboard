@@ -43,7 +43,7 @@ import {db} from "../../Firebase";
 
 
 
-    return deliveryboydata.length==totalrows && deliveryboydata.length!=0  ?
+    return deliveryboydata.length==totalrows  ?
 
      (
         <>

@@ -65,7 +65,7 @@ import {
     //     console.error("Error writing document: ", error);
     // });
     // }
-    return repairdata.length==totalrows && repairdata.length!=0  ?  
+    return repairdata.length==totalrows   ?  
     
     
     (

@@ -29,6 +29,7 @@ import {
     Popover,
     PopoverHeader,
     PopoverBody,
+    Spinner,
    
   } from "reactstrap";
   // import CustomModal from "views/Cards/modal";
@@ -78,7 +79,7 @@ const Customer = (props) => {
     newcustomer.Date="12/03/21";
     newcustomer.username="NULL";
     newcustomer.userid=12;
-      await db.collection("Customer").doc().set(
+      await db.collection("Customer").doc(newcustomer.phonenumber).set(
       newcustomer
       )
       .then(() => {
@@ -107,11 +108,11 @@ const Customer = (props) => {
     })
     }
 
-    // function showdetail(index){
-    //   setcurrentindex(index);
-    //   setModal(!modaldetail);  
+    function showdetail(index){
+      setcurrentindex(index);
+      setModal(!modaldetail);  
     
-    // }
+    }
     async function del(index){
       db.collection("Customer").doc(tabledata[index].ID).delete().then(() => {
         NotificationManager.success("Deleted")
@@ -119,34 +120,38 @@ const Customer = (props) => {
         NotificationManager.error(error)
     });
     }
-    // async function edit(index){
+    async function edit(index){
       
-    //  await db.collection("DeliveryBoy").doc(tabledata[index].ID).update(
-    //     {
-    //       "phone":newdeliveryboy.phone,
-    //       "password":newdeliveryboy.password,
-    //     }
-    //   )
-    //   .then(() => {
-    //     console.log("Document successfully updated!");
-    //     NotificationManager.success("Details Saved");
-    //     setPopoveredit(!popoveredit)
-    //   }).catch((error) => {
-    //         console.error("Error writing document: ", error);
-    //         NotificationManager.error("Error ",error);
-    //     });
-    // }
-    return(  
+     await db.collection("Customer").doc(tabledata[index].ID).update(
+        {
+          "phonenumber":newcustomer.phonenumber,
+          "password":newcustomer.password,
+        }
+      )
+      .then(() => {
+        console.log("Document successfully updated!");
+        NotificationManager.success("Details Saved");
+        setPopoveredit(!popoveredit)
+      }).catch((error) => {
+            console.error("Error writing document: ", error);
+            NotificationManager.error("Error ",error);
+        });
+    }
+    return tabledata.length!=0  ? (
         <>
         <div>
       {/* *********************************Detail Modal************************************ */}
       <Modal isOpen={modaldetail} toggle={toggle} >
         <ModalHeader toggle={toggle}>Modal title</ModalHeader>
         <ModalBody>
-          Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+        <>
+          {tabledata[currentindex].tabledata.username}
+          <br></br>
+          {tabledata[currentindex].tabledata.phonenumber}
+        </>
         </ModalBody>
         <ModalFooter>
-          <Button color="primary" onClick={toggle}>Do Something</Button>{' '}
+          
           <Button color="secondary" onClick={toggle}>Cancel</Button>
         </ModalFooter>
       </Modal>
@@ -318,12 +323,58 @@ const Customer = (props) => {
   </div>
                     </td>
                     <td>
+                      {/* **************************************Customer Edit********************* */}
+                      <>
+                      <Popover placement="bottom" isOpen={popoveredit} target="Popover2" toggle={togglepopoveredit}>
+                      <PopoverHeader>Edit</PopoverHeader>
+                      <PopoverBody>
+                        
+                      <Form role="form" >
+                            <FormGroup className="mb-3">
+                              <InputGroup className="input-group-alternative">
+                                <InputGroupAddon addonType="prepend">
+                                  <InputGroupText>
+                                    <i className="ni ni-mobile-button" />
+                                  </InputGroupText>
+                                </InputGroupAddon>
+                                <Input
+                                  placeholder={data.phonenumber}
+                                  type="tel"
+                                  pattern= "[0-9]{10}"
+                                  onChange={(e)=>{newcustomer.phonenumber=e.target.value}}
+                                />
+                              </InputGroup>
+                            </FormGroup>
+                            <FormGroup>
+                              <InputGroup className="input-group-alternative">
+                                <InputGroupAddon addonType="prepend">
+                                  <InputGroupText>
+                                    <i className="ni ni-lock-circle-open" />
+                                  </InputGroupText>
+                                </InputGroupAddon>
+                                <Input
+                                  placeholder="Password"
+                                  type="text"
+                                  
+                                  onChange={(e)=>{newcustomer.password=e.target.value}}
+
+                                />
+                              </InputGroup>
+                            </FormGroup>
+                            
+                      
+                      <Button color="primary" size="sm" onClick={togglepopoveredit}>Cancel</Button>
+                      <Button color="primary" size="sm"  onClick={()=>edit(index)}>Add</Button>
+                      </Form>
+                      </PopoverBody>
+                    </Popover>
+                      </>
                     <ul className="list-inline m-0">
         <li className="list-inline-item">
-          <button className="btn btn-primary btn-sm rounded-0" type="button" data-toggle="tooltip" data-placement="top" title="Info"><i className="fa fa-info" /></button>
+          <button className="btn btn-primary btn-sm rounded-0" type="button" data-toggle="tooltip" data-placement="top" title="Info" onClick={()=>{toggle()}}><i className="fa fa-info" /></button>
         </li>
         <li className="list-inline-item">
-          <button className="btn btn-success btn-sm rounded-0" type="button" data-toggle="tooltip" data-placement="top" title="Edit"><i className="fa fa-edit" /></button>
+          <button className="btn btn-success btn-sm rounded-0" type="button" data-toggle="tooltip" data-placement="top" title="Edit" id="Popover2" ><i className="fa fa-edit" /></button>
         </li>
         <li className="list-inline-item">
           <button className="btn btn-danger btn-sm rounded-0" type="button" data-toggle="tooltip" data-placement="top" title="Delete" onClick={()=>{del(index)}}><i className="fa fa-trash" /></button>
@@ -392,6 +443,15 @@ const Customer = (props) => {
           </div>
           </Container>
         </>
-    );
+    ):
+    <div>
+    <span>Loading Data...</span>
+
+    <Spinner color="success" />
+    <Spinner color="success" />
+    <Spinner color="success" />
+    <Spinner color="success" />
+    <Spinner color="success" />
+    </div>
 }
 export default Customer;
