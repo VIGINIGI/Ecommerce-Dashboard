@@ -8,7 +8,8 @@ import {
     Card,
     CardHeader,
     CardFooter,
-    
+    InputGroup,
+    Input,
     DropdownMenu,
     DropdownItem,
     UncontrolledDropdown,
@@ -19,10 +20,8 @@ import {
     PaginationLink,
     FormGroup,
     Form,
-    Input,
     InputGroupAddon,
     InputGroupText,
-    InputGroup,
     Table,
     Container,
     Row,
@@ -270,16 +269,19 @@ const Customer = (props) => {
                     data=data.tabledata;
                     return(
                   <tr>
-                    <td>
+                    <td id="userid">
                     {data.userid}
+
+                   
+                
                           
                     </td>
-                    <td>{data.username}</td>
+                    <td id="username">{data.username}</td>
                     
-                    <td>
+                    <td id="phonenumber">
                     {data.phonenumber}
                     </td>
-                    <td>
+                    <td id="Date">
                     {data.Date}
                     </td>
                     <td >
