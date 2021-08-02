@@ -34,16 +34,15 @@ import { NotificationManager} from 'react-notifications';
 
 const DeliveryBoy = (props) => { 
   const [modaldetail, setModal] = useState(false);
-
- const toggle = () =>  setModal(!modaldetail);  
- 
+  const toggle = () =>  setModal(!modaldetail);  
+  
  const [popoverOpen, setPopoverOpen] = useState(false);
  const [popoveredit, setPopoveredit] = useState(false);
  const togglepopoveredit = () => setPopoveredit(!popoveredit);
-
  const togglepopover = () => setPopoverOpen(!popoverOpen);
+
  const [tabledata, settabledata]= useState([]);
-  const [newdeliveryboy,setnewdeliveryboy]=useState({});
+ const [newdeliveryboy,setnewdeliveryboy]=useState({});
 
   const [currentindex,setcurrentindex]=useState(0);
  useEffect( () => {
