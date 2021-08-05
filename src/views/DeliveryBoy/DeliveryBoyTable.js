@@ -1,4 +1,5 @@
 import React, { useState,useEffect } from "react";
+
 import {
     Badge,
     Button,
@@ -28,7 +29,7 @@ import {
    
   } from "reactstrap";
   // import CustomModal from "views/Cards/modal";
-import {  Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
+import {Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
 import {db} from "../../Firebase";
 import { NotificationManager} from 'react-notifications';
 
@@ -132,11 +133,30 @@ return tabledata.length!=0  ? (
       <Modal isOpen={modaldetail} toggle={toggle} >
         <ModalHeader toggle={toggle}>Detail</ModalHeader>
         <ModalBody>
-         
-          <>
-          {tabledata[currentindex].tabledata.name}
+         <>
+         <div className="d-flex justify-content-center">General INFO</div>
+          Name:{tabledata[currentindex].tabledata.name}
           <br></br>
-          {tabledata[currentindex].tabledata.phone}
+          PhoneNo:{tabledata[currentindex].tabledata.phone}
+          <br></br>
+          City:Mumbai
+          <br></br>
+          Pincode:400091
+          <br></br>
+          <br></br>
+          <div className="d-flex justify-content-center">KYC: {tabledata[currentindex].tabledata.status} </div>
+          Name(As per Aadhar):
+          <br></br>
+          Aadhar Number:9082654321
+          <br></br>
+          Front-Image:<img src=""></img>
+          <br></br>
+          Back-Image:<img></img>
+          <br></br>
+
+
+         
+
           </>
         </ModalBody>
         <ModalFooter>
