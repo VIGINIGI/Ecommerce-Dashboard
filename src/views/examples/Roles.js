@@ -10,7 +10,7 @@ import {
   import CardDetail from "views/Cards/CardDetail";
   //import Header from "components/Headers/Header.js";
   import {  CardBody, CardTitle,  Col } from "reactstrap";
-import Roles from "views/Roles/Roles";
+import Roles from "views/Roles/RolesTable";
 import {db} from "../../Firebase";
   const Role = () => {
     const [roles, setroles] = useState([]);
@@ -39,12 +39,22 @@ import {db} from "../../Firebase";
     return roles.length==totalrows && roles.length!=0  ?  
      (
         <>
-        
+        <div className="header bg-gradient-info pb-8 pt-5 pt-md-8">
+        <Container fluid>
+          <div className="header-body">
+            {/* Card stats */}
+            <Row>
+              <CardDetail detail={{name:"Total No Of Categories ",number:123,percent:"12%",last:"Since Last 2 months"}}/>
+              
+              </Row>
+          </div>
+        </Container>
+      </div>
         <>
       
     </>
     {/* ****************************************************Table ****************************************** */}
-    <Roles  data={Roles} />
+    <Roles  data={roles} />
         
           </>
     ):
