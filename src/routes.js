@@ -24,6 +24,7 @@ import Products from "views/examples/Products";
 import ProductCat from "views/examples/ProductCat";
 import Order from "views/examples/Orders";
 import Delivery from "views/examples/DeliveryBoy";
+import Role from "views/examples/Roles";
 var routes = [
   {
     path: "/index",
@@ -89,6 +90,13 @@ var routes = [
     icon: "ni ni-key-25 text-info",
     component: Login,
     layout: "/auth",
+  },
+  {
+    path: "/roles",
+    name: "Roles",
+    icon: "ni ni-key-25 text-info",
+    component: Role,
+    layout: "/admin",
   },
   
 ];

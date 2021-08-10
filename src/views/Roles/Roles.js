@@ -33,7 +33,7 @@ import {Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
 import {db} from "../../Firebase";
 import { NotificationManager} from 'react-notifications';
 
-const DeliveryBoy = (props) => { 
+const Roles = (props) => { 
   const [modaldetail, setModal] = useState(false);
   const toggle = () =>  setModal(!modaldetail);  
   
@@ -50,51 +50,19 @@ const DeliveryBoy = (props) => {
    if( tabledata.length==0){
    props.data.forEach(item=>{
     //  setrepairdata([...repairdata,item.data()]);
+    console.log("Props:",props.data);
      settabledata(state => [...state, item]);
    })
+   
   }
      
 
  },[]);
- async function handleSubmit(e) {
-  e.preventDefault()
-  if(newdeliveryboy.phone.length!=10 || newdeliveryboy.password.length<4){
-    NotificationManager.error("Error! \n Enter Correct Phone Number and Stronger Password ");
-    return;
-  }
-  console.log(newdeliveryboy);
-  newdeliveryboy.orderdelivered=0;
-  newdeliveryboy.status="Active";
-  newdeliveryboy.kycstatus="Not Decided";
-  newdeliveryboy.name="NULL";
-  await db.collection("IDs").doc("DeliveryBoy").get().then((value)=>{
-        
-    let id=value.data().nextid
-    newdeliveryboy.id=id;
-    id=id+1;
-    db.collection("IDs").doc("DeliveryBoy").update({
-      "nextid":id
-    }
-    )
-  })
-  
-    await db.collection("DeliveryBoy").doc(newdeliveryboy.id).set(
-    newdeliveryboy
-    )
-    .then(() => {
-      NotificationManager.success ('Delievery Boy Created');
-        console.log("Document successfully written!");
-    })
-    .catch((error) => {
-      NotificationManager.error(error);
-        console.error("Error writing document: ", error);
-    });
-
-  
-}
+ 
+ 
 async function savedata(){
   tabledata.map((data, index)=> {
-   db.collection("DeliveryBoy").doc(data.ID).update(
+   db.collection("Roles").doc(data.ID).update(
     data.tabledata
   )
   .then(() => {
@@ -112,7 +80,7 @@ function showdetail(index){
 
 }
 async function del(index){
-  db.collection("DeliveryBoy").doc(tabledata[index].ID).delete().then(() => {
+  db.collection("Roles").doc(tabledata[index].ID).delete().then(() => {
     NotificationManager.success("Deleted")
 }).catch((error) => {
     NotificationManager.error(error)
@@ -120,7 +88,7 @@ async function del(index){
 }
 async function edit(index){
   
- await db.collection("DeliveryBoy").doc(tabledata[index].ID).update(
+ await db.collection("Roles").doc(tabledata[index].ID).update(
     {
       "phone":newdeliveryboy.phone,
       "password":newdeliveryboy.password,
@@ -130,100 +98,25 @@ async function edit(index){
     console.log("Document successfully updated!");
     NotificationManager.success("Details Saved");
     setPopoveredit(!popoveredit)
-    setnewdeliveryboy({});
   }).catch((error) => {
         console.error("Error writing document: ", error);
         NotificationManager.error("Error ",error);
-        setnewdeliveryboy({});
     });
 }
 
 return tabledata.length!=0  ? (
         <>
-        <div>
+        
   {/* ********************Detail modal*********************************************************************** */}
-      <Modal isOpen={modaldetail} toggle={toggle} >
-        <ModalHeader toggle={toggle}>Detail</ModalHeader>
-        <ModalBody>
-         <>
-         <div className="d-flex justify-content-center">General INFO</div>
-          Name:{tabledata[currentindex].tabledata.name}
-          <br></br>
-          PhoneNo:{tabledata[currentindex].tabledata.phone}
-          <br></br>
-          City:Mumbai
-          <br></br>
-          Pincode:400091
-          <br></br>
-          <br></br>
-          <div className="d-flex justify-content-center">KYC: {tabledata[currentindex].tabledata.status} </div>
-          Name(As per Aadhar):
-          <br></br>
-          Aadhar Number:9082654321
-          <br></br>
-          Front-Image:<img src=""></img>
-          <br></br>
-          Back-Image:<img></img>
-          <br></br>
-
-
-         
-
-          </>
-        </ModalBody>
-        <ModalFooter>
-          
-          <Button color="secondary" onClick={toggle}>Cancel</Button>
-        </ModalFooter>
-      </Modal>
-    </div>
-
-    <div>
+     
       {/* *************************To Add Delivery Boy***************************** */}
-    <Popover placement="bottom" isOpen={popoverOpen} target="Popover1" toggle={togglepopover}>
-        <PopoverHeader>ADD Delivery Boy</PopoverHeader>
-        <PopoverBody>
-          
-        <Form role="form" onSubmit={handleSubmit}>
-              <FormGroup className="mb-3">
-                <InputGroup className="input-group-alternative">
-                  <InputGroupAddon addonType="prepend">
-                    <InputGroupText>
-                      <i className="ni ni-mobile-button" />
-                    </InputGroupText>
-                  </InputGroupAddon>
-                  <Input
-                    placeholder="Phone"
-                    type="tel"
-                    onChange={(e)=>{newdeliveryboy.phone=e.target.value}}
-                  />
-                </InputGroup>
-              </FormGroup>
-              <FormGroup>
-                <InputGroup className="input-group-alternative">
-                  <InputGroupAddon addonType="prepend">
-                    <InputGroupText>
-                      <i className="ni ni-lock-circle-open" />
-                    </InputGroupText>
-                  </InputGroupAddon>
-                  <Input
-                    placeholder="Password"
-                    type="text"
-                    
-                    onChange={(e)=>{newdeliveryboy.password=e.target.value}}
-
-                  />
-                </InputGroup>
-              </FormGroup>
-              
-         
-        <Button color="primary" size="sm" onClick={togglepopover}>Cancel</Button>
-        <Button color="primary" size="sm" type="submit" onClick={togglepopover}>Add</Button>
-        </Form>
-        </PopoverBody>
-      </Popover>
-    </div>
-
+   
+    
+      <Button
+                      color="primary"
+                      size="sm"
+                      onClick={()=>{console.log(tabledata)}}
+                    >State</Button>
         <Container className="mt--7" fluid>
         <div className="col">
           
@@ -234,14 +127,7 @@ return tabledata.length!=0  ? (
                     <h3 className="mb-0">Page visits</h3>
                   </div>
                   <div className="col text-right">
-                  <Button
-                      color="primary"
-                      size="sm"
-                      id="Popover1" 
-                      type="button"
-                    >
-                      Add A Delivery Boy
-                    </Button>
+                
                   <Button
                       color="primary"
                       href="#pablo"
@@ -272,14 +158,12 @@ return tabledata.length!=0  ? (
               <Table className="align-items-center table-flush" responsive>
                 <thead className="thead-light">
                   <tr>
-                    <th scope="col">ID</th>
-                    <th scope="col">Name</th>
-                    <th scope="col">Contact Number</th>
-                    <th scope="col">OrdersDelivered</th>
-                    <th scope="col">KYC Status</th>
-                    <th scope="col">Status</th>
+                    <th scope="col"> Staff ID</th>
+                    <th scope="col">Staff Name</th>
+                    <th scope="col">Permission Given</th>
+                    <th scope="col">Staff Phone</th>
+                    <th scope="col">Staff Password</th>
                     <th scope="col">Action</th>
-                    <th scope="col">View Details</th>
                     
                     
                   </tr>
@@ -290,97 +174,24 @@ return tabledata.length!=0  ? (
                     return(
                   <tr>
                     <td>
-                      {data.id}
+                      {data.staffid}
                           
                     </td>
-                    <td>{data.name}</td>
+                    <td>{data.staffname}</td>
                     
                     <td>
-                      {data.phone}
+                      {data.permission}
                     </td>
                     <td>
-                      {data.orderdelivered}
+                      {data.phonenumber}
                     </td>
                     <td >
-                    <UncontrolledDropdown>
-                        <DropdownToggle
-                          
-                          href="#pablo"
-                          role="button"
-                          size="sm"
-                          color=""
-                          onClick={(e) => e.preventDefault()}
-                        >
-                          {data.kycstatus}
-                          {/* <i className="fas fa-ellipsis-v" /> */}
-                        </DropdownToggle>
-                        <DropdownMenu className="dropdown-menu-arrow" right>
-                          <DropdownItem
-                            href="#pablo"
-                            onClick={(e)=>{
-                              e.preventDefault();
-                              let temp = [...tabledata];     // create the copy of state array
-                              temp[index].tabledata.kycstatus = 'Success';                  //new value
-                              settabledata(temp);
-                            }}
-                          >
-                            Success
-                          </DropdownItem>
-                          <DropdownItem
-                            href="#pablo"
-                            onClick={(e)=>{
-                              e.preventDefault();
-                              let temp = [...tabledata];     // create the copy of state array
-                              temp[index].tabledata.kycstatus = 'Rejected';                  //new value
-                              settabledata(temp);
-                            }}
-                          >
-                            Rejected
-                          </DropdownItem>
-                          
-                        </DropdownMenu>
-                      </UncontrolledDropdown>
+                    {data.password}
                     </td>
-                    <td>
-                    <UncontrolledDropdown>
-                        <DropdownToggle
-                          
-                          href="#pablo"
-                          role="button"
-                          size="sm"
-                          color=""
-                          onClick={(e) => e.preventDefault()}
-                        >
-                          {data.status}
-                          {/* <i className="fas fa-ellipsis-v" /> */}
-                        </DropdownToggle>
-                        <DropdownMenu className="dropdown-menu-arrow" right>
-                          <DropdownItem
-                            href="#pablo"
-                            onClick={(e)=>{
-                              e.preventDefault();
-                              let temp = [...tabledata];     // create the copy of state array
-                              temp[index].tabledata.status = 'Active';                  //new value
-                              settabledata(temp);
-                            }}
-                          >
-                            Active
-                          </DropdownItem>
-                          <DropdownItem
-                            href="#pablo"
-                            onClick={(e)=>{
-                              e.preventDefault();
-                              let temp = [...tabledata];     // create the copy of state array
-                              temp[index].tabledata.status = 'Blocked';                  //new value
-                              settabledata(temp);
-                            }}
-                          >
-                            Blocked
-                          </DropdownItem>
-                          
-                        </DropdownMenu>
-                      </UncontrolledDropdown> 
-                    </td>
+                    
+        
+                       
+                   
                     <td>
                       {/* **************************************Delivery Boy********************* */}
                       <>
@@ -397,10 +208,10 @@ return tabledata.length!=0  ? (
                                   </InputGroupText>
                                 </InputGroupAddon>
                                 <Input
-                                  placeholder={data.phone}
+                                  placeholder={data.phonenumber}
                                   type="tel"
                                   pattern= "[0-9]{10}"
-                                  onChange={(e)=>{newdeliveryboy.phone=e.target.value}}
+                                  onChange={(e)=>{newdeliveryboy.phonenumber=e.target.value}}
                                 />
                               </InputGroup>
                             </FormGroup>
@@ -438,15 +249,7 @@ return tabledata.length!=0  ? (
                     </li>
                     </ul>
                     </td>
-                    <td>
-                    <Button
-                      color="primary"
-                      
-                      onClick={()=>showdetail(index)}
-                      size="sm"
-                    >Show Details</Button>
-                    </td>
-                    
+                   
                   </tr>
                     )})}
                 </tbody>
@@ -518,4 +321,4 @@ return tabledata.length!=0  ? (
     <Spinner color="success" />
     </div>
 }
-export default DeliveryBoy;
+export default Roles;
