@@ -10,7 +10,7 @@ import {
   import CardDetail from "views/Cards/CardDetail";
   //import Header from "components/Headers/Header.js";
   import {  CardBody, CardTitle,  Col } from "reactstrap";
-  import Products from "views/Products/Products";
+  import Products from "views/Products/ProductsTable";
   import {db} from "../../Firebase";
   const Prod = () => {
     const [product, setproduct] = useState([]);
@@ -36,7 +36,7 @@ import {
       })() 
     }
     },[]);
-    return product.length==totalrows && product.length!=0  ?  (
+    return product.length==totalrows  ?  (
         <>
         {/* Cards above Table */}
         <>

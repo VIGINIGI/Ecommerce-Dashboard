@@ -66,8 +66,18 @@ const DeliveryBoy = (props) => {
   newdeliveryboy.status="Active";
   newdeliveryboy.kycstatus="Not Decided";
   newdeliveryboy.name="NULL";
-  newdeliveryboy.id=12;
-    await db.collection("DeliveryBoy").doc().set(
+  await db.collection("IDs").doc("DeliveryBoy").get().then((value)=>{
+        
+    let id=value.data().nextid
+    newdeliveryboy.id=id;
+    id=id+1;
+    db.collection("IDs").doc("DeliveryBoy").update({
+      "nextid":id
+    }
+    )
+  })
+  
+    await db.collection("DeliveryBoy").doc(newdeliveryboy.id).set(
     newdeliveryboy
     )
     .then(() => {
@@ -119,9 +129,11 @@ async function edit(index){
     console.log("Document successfully updated!");
     NotificationManager.success("Details Saved");
     setPopoveredit(!popoveredit)
+    setnewdeliveryboy({});
   }).catch((error) => {
         console.error("Error writing document: ", error);
         NotificationManager.error("Error ",error);
+        setnewdeliveryboy({});
     });
 }
 

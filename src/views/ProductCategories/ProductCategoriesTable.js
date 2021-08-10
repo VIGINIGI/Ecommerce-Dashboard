@@ -26,7 +26,7 @@ import {
     Pagination,
     PaginationItem,
     PaginationLink,
-    
+    Spinner,
     Table,
     Container,
     Row,
@@ -63,18 +63,33 @@ const ProductCategories = (props) => {
   async function handleSubmit(e) {
     e.preventDefault()
     console.log(newcategory);
-      newcategory.CatId="34";
+      await db.collection("IDs").doc("Category").get().then((value)=>{
+        
+        let id=value.data().nextid
+        newcategory.CatId=id;
+        console.log(id);
+        id=id+1;
+        db.collection("IDs").doc("Category").update({
+          "nextid":id
+        }
+        )
+      })
+
+      
     
-      await db.collection("ProductCat").doc(newcategory.CatName).set(
+      await db.collection("ProductCat").doc(newcategory.CatId+"_"+newcategory.CatName).set(
       newcategory
       )
       .then(() => {
         NotificationManager.success ('Category Created');
           console.log("Document successfully written!");
+          setcategory({});
       })
       .catch((error) => {
         NotificationManager.error(error);
           console.error("Error writing document: ", error);
+          setcategory({});
+
       });
   
     
@@ -116,10 +131,10 @@ const ProductCategories = (props) => {
          });
      }
     
-    return(  
+     return tabledata.length!=0  ? ( 
         <>
         <div>
-      {/* *************************To Add Delivery Boy***************************** */}
+      {/* *************************To Add Category***************************** */}
     <Popover placement="bottom" isOpen={popoverOpen} target="Popover1" toggle={togglepopover}>
         <PopoverHeader>ADD a New Category</PopoverHeader>
         <PopoverBody>
@@ -169,7 +184,7 @@ const ProductCategories = (props) => {
                       id="Popover1" 
                       type="button"
                     >
-                      Add A Delivery Boy
+                      Add Category
                     </Button>
                   <Button
                       color="primary"
@@ -226,7 +241,7 @@ const ProductCategories = (props) => {
                    
                     
                     <td>
-                      {/* **************************************Delivery Boy********************* */}
+                      {/* **************************************Category********************* */}
                       <>
                       <Popover placement="bottom" isOpen={popoveredit} target="Popover2" toggle={togglepopoveredit}>
                       <PopoverHeader>Edit</PopoverHeader>
@@ -330,7 +345,16 @@ const ProductCategories = (props) => {
           </Container>
          
         </>
-    );
+    ):
+    <div>
+    <span>Loading Data...</span>
+
+    <Spinner color="success" />
+    <Spinner color="success" />
+    <Spinner color="success" />
+    <Spinner color="success" />
+    <Spinner color="success" />
+    </div>
 }
 
 export default ProductCategories;
