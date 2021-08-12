@@ -165,11 +165,7 @@ return tabledata.length!=0  ? (
           <br></br>
           Back-Image:<img></img>
           <br></br>
-
-
-         
-
-          </>
+           </>
         </ModalBody>
         <ModalFooter>
           

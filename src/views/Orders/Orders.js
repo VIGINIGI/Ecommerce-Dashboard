@@ -10,7 +10,7 @@ import {
     DropdownItem,
     UncontrolledDropdown,
     DropdownToggle,
-   
+    Spinner,
     Pagination,
     PaginationItem,
     PaginationLink,
@@ -77,17 +77,41 @@ const Orders = (props) => {
           }
       }
 
-    return(  
+    return tabledata.length!=0  ? (  
         <>
         <div>
       {/* <Button color="danger" onClick={toggle}>{buttonLabel}</Button> */}
       <Modal isOpen={modaldetail} toggle={toggle} >
-        <ModalHeader toggle={toggle}>Modal title</ModalHeader>
+        <ModalHeader toggle={toggle}>BILL</ModalHeader>
         <ModalBody>
-          Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+        <>
+         
+          Order No:{tabledata[currentindex].tabledata.OrderID}
+          <br></br>
+          Customer Address:
+          <br></br>
+          Customer Name:
+          <br></br>
+          Customer Id:
+          <br></br>
+          Phone No:{tabledata[currentindex].tabledata.phonenumber}
+          <br></br>
+          Pincode:400060
+          <br></br>
+          City:Mumbai
+          <br></br>
+          PaymentMode:{tabledata[currentindex].tabledata.paymentmode}
+          <br></br>
+          Product Name:{tabledata[currentindex].tabledata.ProductName}
+          <br></br>
+          Product Price:
+          <br></br>
+          Quantity:{tabledata[currentindex].tabledata.quantity}
+          <br></br>
+
+           </>
         </ModalBody>
         <ModalFooter>
-          <Button color="primary" onClick={toggle}>Do Something</Button>{' '}
           <Button color="secondary" onClick={toggle}>Cancel</Button>
         </ModalFooter>
       </Modal>
@@ -375,6 +399,15 @@ const Orders = (props) => {
           </div>
           </Container>
         </>
-    );
+    ):
+    <div>
+    <span>Loading Data...</span>
+
+    <Spinner color="success" />
+    <Spinner color="success" />
+    <Spinner color="success" />
+    <Spinner color="success" />
+    <Spinner color="success" />
+    </div>
 }
 export default Orders;

@@ -43,10 +43,7 @@ import {db} from "../../Firebase";
         <Container fluid>
           <div className="header-body">
             {/* Card stats */}
-            <Row>
-              <CardDetail detail={{name:"Total No Of Categories ",number:123,percent:"12%",last:"Since Last 2 months"}}/>
-              
-              </Row>
+           
           </div>
         </Container>
       </div>
