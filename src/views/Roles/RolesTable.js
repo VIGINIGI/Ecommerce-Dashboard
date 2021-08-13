@@ -43,7 +43,7 @@ const Roles = (props) => {
  const togglepopover = () => setPopoverOpen(!popoverOpen);
 
  const [tabledata, settabledata]= useState([]);
- const [newdeliveryboy,setnewdeliveryboy]=useState({});
+ const [newstaff,setnewstaff]=useState({"staffname":"","phonenumber":"","password":""});
 
   const [currentindex,setcurrentindex]=useState(0);
  useEffect( () => {
@@ -59,7 +59,42 @@ const Roles = (props) => {
 
  },[]);
  
- 
+ async function handleSubmit(e) {
+  e.preventDefault()
+  if(newstaff.phonenumber.length!=10 || newstaff.password.length<4){
+    NotificationManager.error("Error! \n Enter Correct Phone Number and Stronger Password ");
+    return;
+  }
+  
+  
+  await db.collection("IDs").doc("Staff").get().then((value)=>{
+        
+    let id=value.data().nextid
+    newstaff.staffid=id;
+    id=id+1;
+    db.collection("IDs").doc("Staff").update({
+      "nextid":id
+    }
+    )
+  })
+  console.log(newstaff);
+    await db.collection("Roles").doc(newstaff.staffid+"_"+newstaff.staffname).set(
+    newstaff
+    )
+    .then(() => {
+      NotificationManager.success ('Staff Created');
+      setnewstaff({"staffname":"","phonenumber":"","password":""});
+        console.log("Document successfully written!");
+    })
+    .catch((error) => {
+      NotificationManager.error(error);
+      setnewstaff({"staffname":"","phonenumber":"","password":""});
+
+        console.error("Error writing document: ", error);
+    });
+
+  
+}
 async function savedata(){
   tabledata.map((data, index)=> {
    db.collection("Roles").doc(data.ID).update(
@@ -89,9 +124,9 @@ async function del(index){
 async function edit(index){
   
  await db.collection("Roles").doc(tabledata[index].ID).update(
-    {
-      "phone":newdeliveryboy.phone,
-      "password":newdeliveryboy.password,
+    { "staffname":newstaff.staffname,
+      "phone":newstaff.phonenumber,
+      "password":newstaff.password,
     }
   )
   .then(() => {
@@ -108,10 +143,65 @@ return tabledata.length!=0  ? (
         <>
         
   {/* ********************Detail modal*********************************************************************** */}
+
      
       {/* *************************To Add Delivery Boy***************************** */}
-   
-    
+      <Modal isOpen={modaldetail} toggle={toggle} >
+        <ModalHeader toggle={toggle}>Add Staff</ModalHeader>
+        <ModalBody>
+         <>
+         <Form role="form" onSubmit={handleSubmit}>
+         <FormGroup className="mb-3">
+                <InputGroup className="input-group-alternative">
+                  <InputGroupAddon addonType="prepend">
+                    <InputGroupText>
+                      <i className="ni ni-mobile-button" />
+                    </InputGroupText>
+                  </InputGroupAddon>
+                  <Input
+                    placeholder="Name"
+                    type="text"
+                    onChange={(e)=>{newstaff.staffname=e.target.value}}
+                  />
+                </InputGroup>
+              </FormGroup>
+              <FormGroup className="mb-3">
+                <InputGroup className="input-group-alternative">
+                  <InputGroupAddon addonType="prepend">
+                    <InputGroupText>
+                      <i className="ni ni-mobile-button" />
+                    </InputGroupText>
+                  </InputGroupAddon>
+                  <Input
+                    placeholder="Phone"
+                    type="tel"
+                    onChange={(e)=>{newstaff.phonenumber=e.target.value}}
+                  />
+                </InputGroup>
+              </FormGroup>
+              <FormGroup>
+                <InputGroup className="input-group-alternative">
+                  <InputGroupAddon addonType="prepend">
+                    <InputGroupText>
+                      <i className="ni ni-lock-circle-open" />
+                    </InputGroupText>
+                  </InputGroupAddon>
+                  <Input
+                    placeholder="Password"
+                    type="text"
+                    
+                    onChange={(e)=>{newstaff.password=e.target.value}}
+
+                  />
+                </InputGroup>
+              </FormGroup>
+              <Button color="primary" size="sm" onClick={toggle}>Cancel</Button>
+        <Button color="primary" size="sm" type="submit" onClick={toggle}>Add</Button>
+        </Form>
+         </>
+        </ModalBody>
+      </Modal>
+
       <Button
                       color="primary"
                       size="sm"
@@ -127,7 +217,14 @@ return tabledata.length!=0  ? (
                     <h3 className="mb-0">Page visits</h3>
                   </div>
                   <div className="col text-right">
-                
+                  <Button
+                      color="primary"
+                      href="#pablo"
+                      onClick={(e) => toggle()}
+                      size="sm"
+                    >
+                      Add A Staff
+                    </Button>
                   <Button
                       color="primary"
                       href="#pablo"
@@ -200,6 +297,21 @@ return tabledata.length!=0  ? (
                       <PopoverBody>
                         
                       <Form role="form" >
+                      <FormGroup className="mb-3">
+                              <InputGroup className="input-group-alternative">
+                                <InputGroupAddon addonType="prepend">
+                                  <InputGroupText>
+                                    <i className="ni ni-mobile-button" />
+                                  </InputGroupText>
+                                </InputGroupAddon>
+                                <Input
+                                  placeholder={data.staffname}
+                                  type="text"
+                                  
+                                  onChange={(e)=>{newstaff.staffname=e.target.value}}
+                                />
+                              </InputGroup>
+                            </FormGroup>
                             <FormGroup className="mb-3">
                               <InputGroup className="input-group-alternative">
                                 <InputGroupAddon addonType="prepend">
@@ -211,7 +323,7 @@ return tabledata.length!=0  ? (
                                   placeholder={data.phonenumber}
                                   type="tel"
                                   pattern= "[0-9]{10}"
-                                  onChange={(e)=>{newdeliveryboy.phonenumber=e.target.value}}
+                                  onChange={(e)=>{newstaff.phonenumber=e.target.value}}
                                 />
                               </InputGroup>
                             </FormGroup>
@@ -226,7 +338,7 @@ return tabledata.length!=0  ? (
                                   placeholder="Password"
                                   type="text"
                                   
-                                  onChange={(e)=>{newdeliveryboy.password=e.target.value}}
+                                  onChange={(e)=>{newstaff.password=e.target.value}}
 
                                 />
                               </InputGroup>

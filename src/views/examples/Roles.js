@@ -36,7 +36,7 @@ import {db} from "../../Firebase";
       })() 
     }
     },[]);
-    return roles.length==totalrows && roles.length!=0  ?  
+    return roles.length==totalrows  ?  
      (
         <>
         <div className="header bg-gradient-info pb-8 pt-5 pt-md-8">

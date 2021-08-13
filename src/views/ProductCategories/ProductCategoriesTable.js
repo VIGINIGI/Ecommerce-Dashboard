@@ -41,7 +41,7 @@ const ProductCategories = (props) => {
  
   const [popoverOpen, setPopoverOpen] = useState(false);
   const togglepopover = () => setPopoverOpen(!popoverOpen);
-  const [newcategory,setcategory]=useState({});
+  const [newcategory,setcategory]=useState({"CatName":""});
   const [popoveredit, setPopoveredit] = useState(false);
  const togglepopoveredit = () => setPopoveredit(!popoveredit);
 
@@ -83,12 +83,12 @@ const ProductCategories = (props) => {
       .then(() => {
         NotificationManager.success ('Category Created');
           console.log("Document successfully written!");
-          setcategory({});
+          setcategory({"CatName":""});
       })
       .catch((error) => {
         NotificationManager.error(error);
           console.error("Error writing document: ", error);
-          setcategory({});
+          setcategory({"CatName":""});
 
       });
   
