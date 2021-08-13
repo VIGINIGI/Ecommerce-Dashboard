@@ -18,6 +18,12 @@ import {
     Table,
     Container,
     Row,
+    FormGroup,
+    Form,
+    Input,
+    InputGroupAddon,
+    InputGroupText,
+    InputGroup,
    
   } from "reactstrap";
   import {db} from "../../Firebase";
@@ -35,17 +41,21 @@ const SellReq = (props) => {
   const [deliveryboydata,setdeliveryboydata]=useState([]);
   const [totalrows,settotalrows]=useState(0);
   const [currentindex,setcurrentindex]=useState(0);
-
+//for search 
+var stringSimilarity = require("string-similarity");
+const [search, setsearch]=useState("");
+const [searchresult, setsearchresult]=useState([]);
+const [displaydata,setdisplaydata]=useState([]);
 
   useEffect( () => {
     if( tabledata.length==0){
     console.log("Props:",props.data);
     props.data.forEach(item=>{
      
-      settabledata(state => [...state, item]);
-     
+     tabledata.push(item);
      
     })
+    setdisplaydata(tabledata);
    }
       
  
@@ -80,7 +90,26 @@ async function getdeliveryboy(index){
            })
           }
 }
+function searchdata(param){
+  setsearchresult([]);
+  // var matches= stringSimilarity.findBestMatch(search, tabledata);
+  // console.log("Matches:",matches);
+  if (param===""){
+    setdisplaydata(tabledata);
+    return
+  }
+
+  tabledata.forEach(item=>{
      
+    if  (stringSimilarity.compareTwoStrings(search, item.tabledata.username)>=0.7||stringSimilarity.compareTwoStrings(search, item.tabledata.mobilename)>=0.7 || stringSimilarity.compareTwoStrings(search, item.tabledata.requestid.toString())>=0.8){
+    //  setsearchresult(state => [...state, item]);
+    searchresult.push(item);
+     }
+     
+   })
+   setdisplaydata(searchresult);
+   console.log(displaydata);
+}
     return(  
         <>
         <div>
@@ -173,6 +202,24 @@ async function getdeliveryboy(index){
                   <div className="col">
                     <h3 className="mb-0">Page visits</h3>
                   </div>
+                  {/* ************************Search Bar************************** */}
+                <FormGroup className="mb-3">
+                <InputGroup className="input-group-alternative">
+                  
+                  <Input
+                    placeholder="Search...."
+                    type="text"
+                    onChange={(e)=>{setsearch(e.target.value);setsearchresult([]);}}
+                  />
+                  <InputGroupAddon addonType="prepend">
+                    <InputGroupText>
+                    <button onClick={()=>{searchdata(search)}}><i className="ni ni-zoom-split-in" /></button>
+                    <button onClick={()=>{searchdata("")}}><i className="ni ni-fat-remove" /></button>
+                    
+                    </InputGroupText>
+                  </InputGroupAddon>
+                </InputGroup>
+              </FormGroup>
                   <div className="col text-right">
                   <Button
                       color="primary"
@@ -218,7 +265,7 @@ async function getdeliveryboy(index){
                   </tr>
                 </thead>
                 <tbody>
-                {tabledata && tabledata.map((data, index)=> {
+                {displaydata && displaydata.map((data, index)=> {
                     data=data.tabledata;
                     return(
                   <tr>

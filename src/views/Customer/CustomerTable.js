@@ -52,18 +52,22 @@ const Customer = (props) => {
   const [newcustomer,setnewcustomer]=useState({});
 
   const [currentindex,setcurrentindex]=useState(0);
+  //for search 
+ var stringSimilarity = require("string-similarity");
+ const [search, setsearch]=useState("");
+ const [searchresult, setsearchresult]=useState([]);
+ const [displaydata,setdisplaydata]=useState([]);
 
   useEffect( () => {
     if( tabledata.length==0){
     console.log("Props:",props.data);
     props.data.forEach(item=>{
      //  setrepairdata([...repairdata,item.data()]);
-      settabledata(state => [...state, item]);
-     
+      tabledata.push(item);
      
     })
    }
-      
+    setdisplaydata(tabledata);  
  
   },[]);
   async function handleSubmit(e) {
@@ -77,8 +81,17 @@ const Customer = (props) => {
     newcustomer.status="Active";
     newcustomer.Date="12/03/21";
     newcustomer.username="NULL";
-    newcustomer.userid=12;
-      await db.collection("Customer").doc(newcustomer.phonenumber).set(
+    await db.collection("IDs").doc("Customer").get().then((value)=>{
+        
+      let id=value.data().nextid
+      newcustomer.userid=id;
+      id=id+1;
+      db.collection("IDs").doc("Customer").update({
+        "nextid":id
+      }
+      )
+    })
+      await db.collection("Customer").doc(newcustomer.userid+"_"+newcustomer.phonenumber).set(
       newcustomer
       )
       .then(() => {
@@ -135,6 +148,25 @@ const Customer = (props) => {
             console.error("Error writing document: ", error);
             NotificationManager.error("Error ",error);
         });
+    }
+    function searchdata(param){
+      setsearchresult([]);
+      // var matches= stringSimilarity.findBestMatch(search, tabledata);
+      // console.log("Matches:",matches);
+      if (param===""){
+        setdisplaydata(tabledata);
+        return
+      }
+
+      tabledata.forEach(item=>{      
+        if  (stringSimilarity.compareTwoStrings(search, item.tabledata.username)>=0.7 || stringSimilarity.compareTwoStrings(search, item.tabledata.userid.toString())>=0.8){
+        //  setsearchresult(state => [...state, item]);
+        searchresult.push(item);
+         }
+         
+       })
+       setdisplaydata(searchresult);
+       console.log(displaydata);
     }
     return tabledata.length!=0  ? (
         <>
@@ -217,6 +249,24 @@ const Customer = (props) => {
                   <div className="col">
                     <h3 className="mb-0">Page visits</h3>
                   </div>
+                  {/* ************************Search Bar************************** */}
+                <FormGroup className="mb-3">
+                <InputGroup className="input-group-alternative">
+                  
+                  <Input
+                    placeholder="Search...."
+                    type="text"
+                    onChange={(e)=>{setsearch(e.target.value);setsearchresult([]);}}
+                  />
+                  <InputGroupAddon addonType="prepend">
+                    <InputGroupText>
+                    <button onClick={()=>{searchdata(search)}}><i className="ni ni-zoom-split-in" /></button>
+                    <button onClick={()=>{searchdata("")}}><i className="ni ni-fat-remove" /></button>
+                    
+                    </InputGroupText>
+                  </InputGroupAddon>
+                </InputGroup>
+              </FormGroup>
                   <div className="col text-right">
                   <Button
                       color="primary"
@@ -265,7 +315,7 @@ const Customer = (props) => {
                   </tr>
                 </thead>
                 <tbody>
-                {tabledata && tabledata.map((data, index)=> {
+                {displaydata && displaydata.map((data, index)=> {
                     data=data.tabledata;
                     return(
                   <tr>
