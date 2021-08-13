@@ -1,6 +1,7 @@
 import React,{ useState,useEffect } from "react"; 
 import {db} from "../../Firebase";
 import {storageRef} from "../../Firebase";
+import ReactToExcel from "react-html-table-to-excel";
 import {
     Badge,
     Button,
@@ -154,6 +155,9 @@ const Products= (props) => {
       setModal(!modaldetail);  
     
     }
+    
+     
+      
     async function del(index){
       db.collection("Product").doc(tabledata[index].ID).delete().then(() => {
         NotificationManager.success("Deleted")
@@ -457,16 +461,32 @@ const Products= (props) => {
                       onClick={()=>{toggleproduct()}} 
                       type="button"
                     >
+                      
                       Add A Product
                     </Button>
-                  <Button 
+
+
+                    {/*<Button 
                       color="primary"
                       href="#pablo"
                       onClick={(e) => e.preventDefault()}
                       size="sm"
                     >
-                      Export To Excel
-                    </Button>
+                      Export to Excel
+                    </Button>*/}
+
+                     <ReactToExcel
+                     className="btn"
+                     table="excel"
+                     filename="excel file"
+                     sheet="sheet 1"
+                     buttonText="Export to excel"
+                    />
+                    
+                   
+
+                    
+                    
                     <Button 
                       color="primary"
                       href="#pablo"
@@ -486,7 +506,7 @@ const Products= (props) => {
                   </div>
                 </Row>
               </CardHeader>
-              <Table className="align-items-center table-flush" responsive>
+              <Table className="align-items-center table-flush" id="excel" responsive>
                 <thead className="thead-light">
                   <tr>
                     <th scope="col">Product Id</th>
@@ -579,6 +599,8 @@ const Products= (props) => {
                   
                 </tbody>
               </Table>
+             
+
               <CardFooter className="py-4">
                 <nav aria-label="...">
                   <Pagination
