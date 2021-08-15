@@ -1,5 +1,9 @@
 import React, {useState,useEffect} from "react";
 import { NotificationManager } from "react-notifications";
+import { AgGridReact} from 'ag-grid-react';
+
+import 'ag-grid-community/dist/styles/ag-grid.css';
+import 'ag-grid-community/dist/styles/ag-theme-alpine.css';
 import {
     Badge,
     Button,
@@ -34,6 +38,7 @@ const Orders = (props) => {
   const [deliveryboydata,setdeliveryboydata]=useState([]);
   const [totalrows,settotalrows]=useState(0);
   const [currentindex,setcurrentindex]=useState(0);
+  
   useEffect( () => {
     if( tabledata.length==0){
     console.log("Props:",props.data);
@@ -240,7 +245,7 @@ const Orders = (props) => {
                     <th scope="col">Quantity</th>
                     <th scope="col">PhoneNumber</th>
                     <th scope="col">PaymentMode</th>
-                    <th scope="col">Date</th>
+                    <th scope="col" >Date</th>
                     <th scope="col">View Bill</th>
                     <th scope="col">Status</th>
                     <th scope="col">AssignDelieveryBoy</th>

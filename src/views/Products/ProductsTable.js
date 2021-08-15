@@ -51,6 +51,10 @@ const Products= (props) => {
   const [tdata,settdata] = useState();
   const[searchTerm,setsearchTerm]=useState("");
   var categoryoutput="";
+
+ 
+
+	
   useEffect( () => {
     if( tabledata.length==0){
       db.collection("ProductCat").get().then((value)=>{
