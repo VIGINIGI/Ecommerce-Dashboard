@@ -173,7 +173,9 @@ async function getdeliveryboy(index){
                       href="#pablo"
                       onClick={()=>{
                         let temp = [...tabledata];    
-                        temp[currentindex].tabledata.deliveryboy = data.ID;                  
+                        temp[currentindex].tabledata.deliveryBoyId = data.ID;
+                        temp[currentindex].tabledata.deliveryBoyName = data.tabledata.name;    
+                        temp[currentindex].tabledata.deliveryBoyPhoneNumber = data.tabledata.phone;                  
                         settabledata(temp);
                         
                         db.collection("RepairRequest").doc(tabledata[currentindex].ID).update(
@@ -283,14 +285,15 @@ async function getdeliveryboy(index){
                 </thead>
                 <tbody>
                   {displaydata && displaydata.map((data, index)=> {
+                    var id =data.ID;
                     data=data.tabledata;
                     return(
                   <tr>
                     <td>
-                      {data.requestid}
+                      {id}
                           
                     </td>
-                    <td>{data.username}</td>
+                    <td>{data.userName}</td>
                     <td>
                       {/* {data.setprice==="Not Decided"? 
                       <Button
@@ -316,16 +319,16 @@ async function getdeliveryboy(index){
 
                     </td>
                     <td>
-                      {data.phonenumber}
+                      {data.userPhoneNumber}
                     </td>
                     <td>
                       {data.paymentmode}
                     </td>
                     <td >
-                      {data.mobilename}
+                      {data.phoneBrandName}
                     </td>
                     <td>
-                      {data.Date}
+                      {data.OrderDate}
                     </td>
                     <td>
                     <Button
@@ -345,7 +348,7 @@ async function getdeliveryboy(index){
                           color=""
                           onClick={(e) => e.preventDefault()}
                         >
-                          {data.status}
+                          {data.OrderStatus}
                           {/* <i className="fas fa-ellipsis-v" /> */}
                         </DropdownToggle>
                         <DropdownMenu className="dropdown-menu-arrow" right>
@@ -353,7 +356,7 @@ async function getdeliveryboy(index){
                             href="#pablo"
                             onClick={()=>{
                               let temp = [...tabledata];     // create the copy of state array
-                              temp[index].tabledata.status = 'Pending';                  //new value
+                              temp[index].tabledata.status = 'Request In Review';                  //new value
                               settabledata(temp);
                             }}
                           >
@@ -383,10 +386,10 @@ async function getdeliveryboy(index){
                       </UncontrolledDropdown>
                     </td>
                     <td>
-                      {data.deliveryboy!="" ?
+                      {data.deliveryBoyId!=undefined ?
                       <><Badge color="" className="badge-dot mr-4">
                       <i className="bg-success" />
-                      Assigned
+                      {data.deliveryBoyId}
                     </Badge></>:
                       <Button
                       color="primary"

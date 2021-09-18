@@ -39,7 +39,9 @@ const Orders = (props) => {
   const [deliveryboydata,setdeliveryboydata]=useState([]);
   const [totalrows,settotalrows]=useState(0);
   const [currentindex,setcurrentindex]=useState(0);
-
+  // for sorting
+  const sorttype=["None","Start","End"];
+  var sortnum=0;
   //for search 
  var stringSimilarity = require("string-similarity");
  const [search, setsearch]=useState("");
@@ -107,6 +109,35 @@ const Orders = (props) => {
          })
          setdisplaydata(searchresult);
       }
+      function sort(attr){
+          console.log(attr);
+        //   function isgreater(date1,date2){
+
+        //   }
+        //   function sortdata(data){
+        //     var i, j;
+        //     for (i = 0; i < data.length-1; i++)
+        //     {
+        //         for (j = 0; j < data.length-i-1; j++)
+        //         {
+        //             if (arr[j] > arr[j+1])
+        //             {
+        //               var temp = data[j];
+        //               data[j] = data[j+1];
+        //               data[j+1] = temp;
+        //             }
+        //         }
+        //     }
+        //     return data;
+        //   }
+        //   setdisplaydata(prevState => {
+        //     let prevarray = [...prevState];
+        //     let data= sortdata(prevarray)
+        //     return  data ;
+        // })
+          
+      }
+
 
     return tabledata.length!=0  ? (  
         <>
@@ -258,7 +289,7 @@ const Orders = (props) => {
                     <Button
                       color="primary"
                       href="#pablo"
-                      onClick={(e) => e.preventDefault()}
+                      onClick={(e) => {e.preventDefault();sort(sorttype[(++sortnum)%3]);}}
                       size="sm"
                     >
                       Sort
