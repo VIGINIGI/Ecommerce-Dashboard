@@ -41,7 +41,7 @@ const Login = () => {
 
   const [email, setemail] = useState("")
   const [password, setpassword] = useState("")
-  const { login } = useAuth()
+  const { login, stafflogin } = useAuth()
   const [error, setError] = useState("")
   // const [loading, setLoading] = useState(false)
   const history = useHistory()
@@ -49,15 +49,16 @@ const Login = () => {
   async function handleSubmit(e) {
     e.preventDefault()
     console.log(email);
-    try {
+    try { 
       setError("")
       // setLoading(true)
       await login(email, password)
+      // stafflogin("9987669414","vighnesh");
       console.log("Logged in");
 
       history.push("/admin")
-    } catch {
-      console.log("Failed to login");
+    } catch (e){
+      console.log(e);
       NotificationManager.error ('Failed to login');
       setError("Failed to log in")
     }
@@ -126,10 +127,12 @@ const Login = () => {
                   </InputGroupAddon>
                   <Input
                     placeholder="Email"
-                    type="email"
+                    type="text"
                     autoComplete="new-email"
                     onChange={e => setemail(e.target.value)}
                     ref={emailRef}
+                    autocomplete="on"
+                    name="email"
                   />
                 </InputGroup>
               </FormGroup>

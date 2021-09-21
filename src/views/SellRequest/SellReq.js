@@ -155,7 +155,10 @@ function searchdata(param){
                       href="#pablo"
                       onClick={()=>{
                         let temp = [...tabledata];    
-                        temp[currentindex].tabledata.deliveryboy = data.ID;                  
+                        temp[currentindex].tabledata.deliveryBoyId = data.ID;
+                        temp[currentindex].tabledata.deliveryBoyName = data.tabledata.name;    
+                        temp[currentindex].tabledata.deliveryBoyPhoneNumber = data.tabledata.phone;
+              
                         settabledata(temp);
                         
                         db.collection("SellRequest").doc(tabledata[currentindex].ID).update(
@@ -253,56 +256,64 @@ function searchdata(param){
                   <tr>
                     <th scope="col">Request Number</th>
                     <th scope="col">UserName</th>
-                    <th scope="col">SetPrice</th>
+                    <th scope="col">Set Price</th>
+                    <th scope="col">Status</th>
                     <th scope="col">PhoneNumber</th>
                     <th scope="col">PaymentMode</th>
-                    <th scope="col">Mobile Name</th>
+                    <th scope="col">Phone Brand</th>
                     <th scope="col">Date</th>
                     <th scope="col">Details</th>
-                    <th scope="col">Status</th>
+                    
                     <th scope="col">AssignDelieveryBoy</th>
                     <th scope="col" />
                   </tr>
                 </thead>
                 <tbody>
                 {displaydata && displaydata.map((data, index)=> {
+                    var id=data.ID;
                     data=data.tabledata;
                     return(
                   <tr>
                     <td>
-                      {data.requestid}
+                      {id}
                           
                     </td>
-                    <td>{data.username}</td>
+                    <td>{data.userName}</td>
                     <td>
-                      {data.setprice==="Not Decided"? 
-                      <Button
-                      color="primary"
-                      size="sm"
-                    >Set Price</Button>: data.setprice
-
+                      <div className="width:100px">
+                    <InputGroup>
+                      <Input
+                    placeholder={data.SetPrice}
+                    className="width:100"
+                    type="text"
+                    onChange={
+                      (e)=>{
+                        let temp = [...tabledata];    
+                        temp[index].tabledata.SetPrice = e.target.value;                  
+                        settabledata(temp);
+                      }
                     }
+                  />
+                  </InputGroup>
+                  {data.status!=="Accepted"?
+                  <ul className="list-inline m-0">
+                  <li className="list-inline-item">
+                    <button className="btn btn-warning btn-sm rounded-0" type="button" data-toggle="tooltip" data-placement="top" title="Accept" onClick={()=>{
+                        let temp = [...tabledata];     // create the copy of state array
+                        temp[index].tabledata.OrderStatus = 'Pending';                  //new value
+                        settabledata(temp); 
+                        savedata();
+                    }}>Negotiate <i className="fa fa-check" /></button>
+                  </li>
+                  </ul>
+                  :
+                  <></>
+                }
+                  </div>
 
-                    </td>
-                    <td>
-                      {data.phonenumber}
-                    </td>
-                    <td>
-                      {data.paymentmode}
-                    </td>
-                    <td >
-                      {data.mobilename}
-                    </td>
-                    <td>
-                      {data.Date}
-                    </td>
-                    <td>
-                    <Button
-                      color="primary"
-                      
-                      onClick={toggle}
-                      size="sm"
-                    >Show Details</Button>
+
+                    
+
                     </td>
                     <td>
                     <UncontrolledDropdown>
@@ -314,7 +325,7 @@ function searchdata(param){
                           color=""
                           onClick={(e) => e.preventDefault()}
                         >
-                          {data.status}
+                          {data.OrderStatus}
                           {/* <i className="fas fa-ellipsis-v" /> */}
                         </DropdownToggle>
                         <DropdownMenu className="dropdown-menu-arrow" right>
@@ -322,7 +333,7 @@ function searchdata(param){
                             href="#pablo"
                             onClick={()=>{
                               let temp = [...tabledata];     // create the copy of state array
-                              temp[index].tabledata.status = 'Pending';                  //new value
+                              temp[index].tabledata.OrderStatus = 'Request in Review';                  //new value
                               settabledata(temp);
                             }}
                           >
@@ -332,8 +343,9 @@ function searchdata(param){
                             href="#pablo"
                             onClick={()=>{
                               let temp = [...tabledata];     // create the copy of state array
-                              temp[index].tabledata.status = 'Accepted';                  //new value
+                              temp[index].tabledata.OrderStatus = 'Accepted';                  //new value
                               settabledata(temp);
+                              savedata();
                             }}
                           >
                             Accepted
@@ -342,7 +354,7 @@ function searchdata(param){
                             href="#pablo"
                             onClick={()=>{
                               let temp = [...tabledata];     // create the copy of state array
-                              temp[index].tabledata.status = 'Cancelled';                  //new value
+                              temp[index].tabledata.OrderStatus= 'Cancelled';                  //new value
                               settabledata(temp);
                             }}
                           >
@@ -352,10 +364,31 @@ function searchdata(param){
                       </UncontrolledDropdown>
                     </td>
                     <td>
-                    {data.deliveryboy!="" ?
+                      {data.userPhoneNumber}
+                    </td>
+                    <td>
+                      {data.paymentmode}
+                    </td>
+                    <td >
+                      {data.phoneBrandName}
+                    </td>
+                    <td>
+                      {data.OrderDate}
+                    </td>
+                    <td>
+                    <Button
+                      color="primary"
+                      
+                      onClick={toggle}
+                      size="sm"
+                    >Show Details</Button>
+                    </td>
+                    
+                    <td>
+                    {data.deliveryBoyId!=undefined ?
                       <><Badge color="" className="badge-dot mr-4">
                       <i className="bg-success" />
-                      Assigned
+                      {data.deliveryBoyId}
                     </Badge></>:
                       <Button
                       color="primary"

@@ -1,5 +1,6 @@
 import React, { useContext, useState, useEffect } from "react"
 import { auth } from "../Firebase"
+import { db } from "../Firebase"
 const AuthContext = React.createContext()
 
 export function useAuth() {
@@ -8,6 +9,8 @@ export function useAuth() {
 
 export function AuthProvider({ children }) {
   const [currentUser, setCurrentUser] = useState()
+  var [staff, setstaff] = useState([])
+  
   const [loading, setLoading] = useState(true)
 
   function signup(email, password) {
@@ -17,8 +20,21 @@ export function AuthProvider({ children }) {
   function login(email, password) {
     return auth.signInWithEmailAndPassword(email, password)
   }
+  function stafflogin(phone,password){
+    db.collection('Roles').where('phonenumber', '==', phone).get().then((value)=>{
+      var data= value.docs;
+      data.forEach(item=>{
+        console.log("item.data",item.data());
+        if(item.data().password===password){
+          staff= item.data();
+        }
+      })
+      console.log(staff);
+    })
+  }
 
   function logout() {
+    console.log("user:",currentUser);
     return auth.signOut()
   }
 
@@ -38,6 +54,7 @@ export function AuthProvider({ children }) {
     const unsubscribe = auth.onAuthStateChanged(user => {
       setCurrentUser(user)
       setLoading(false)
+      
     })
 
     return unsubscribe
@@ -45,6 +62,8 @@ export function AuthProvider({ children }) {
 
   const value = {
     currentUser,
+    staff,
+    stafflogin,
     login,
     signup,
     logout,
