@@ -43,7 +43,7 @@ const DeliveryBoy = (props) => {
  const togglepopover = () => setPopoverOpen(!popoverOpen);
 
  const [tabledata, settabledata]= useState([]);
- const [newdeliveryboy,setnewdeliveryboy]=useState({});
+ const [newdeliveryboy,setnewdeliveryboy]=useState({"phone":"","password":""});
 
   const [currentindex,setcurrentindex]=useState(0);
  useEffect( () => {
@@ -78,16 +78,19 @@ const DeliveryBoy = (props) => {
     )
   })
   
-    await db.collection("DeliveryBoy").doc(newdeliveryboy.id).set(
+    await db.collection("DeliveryBoy").doc(newdeliveryboy.id+"_"+newdeliveryboy.phone).set(
     newdeliveryboy
     )
     .then(() => {
       NotificationManager.success ('Delievery Boy Created');
         console.log("Document successfully written!");
+        setnewdeliveryboy({"phone":"","password":""});
     })
     .catch((error) => {
       NotificationManager.error(error);
         console.error("Error writing document: ", error);
+        setnewdeliveryboy({"phone":"","password":""});
+
     });
 
   

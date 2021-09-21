@@ -41,9 +41,15 @@ const ProductCategories = (props) => {
  
   const [popoverOpen, setPopoverOpen] = useState(false);
   const togglepopover = () => setPopoverOpen(!popoverOpen);
-  const [newcategory,setcategory]=useState({});
+  const [newcategory,setcategory]=useState({"CatName":""});
   const [popoveredit, setPopoveredit] = useState(false);
  const togglepopoveredit = () => setPopoveredit(!popoveredit);
+
+ //for search 
+ var stringSimilarity = require("string-similarity");
+ const [search, setsearch]=useState("");
+ const [searchresult, setsearchresult]=useState([]);
+ const [displaydata,setdisplaydata]=useState([]);
 
  const [tabledata, settabledata]= useState([]);
   const [tdata,settdata] = useState();
@@ -52,10 +58,11 @@ const ProductCategories = (props) => {
     console.log("Props:",props.data);
     props.data.forEach(item=>{
      //  setrepairdata([...repairdata,item.data()]);
-      settabledata(state => [...state, item]);
+      tabledata.push(item);
      
      
     })
+    setdisplaydata(tabledata);
    }
       
  
@@ -83,12 +90,12 @@ const ProductCategories = (props) => {
       .then(() => {
         NotificationManager.success ('Category Created');
           console.log("Document successfully written!");
-          setcategory({});
+          setcategory({"CatName":""});
       })
       .catch((error) => {
         NotificationManager.error(error);
           console.error("Error writing document: ", error);
-          setcategory({});
+          setcategory({"CatName":""});
 
       });
   
@@ -130,6 +137,23 @@ const ProductCategories = (props) => {
              NotificationManager.error("Error ",error);
          });
      }
+     function searchdata(param){
+      setsearchresult([]);
+      // var matches= stringSimilarity.findBestMatch(search, tabledata);
+      // console.log("Matches:",matches);
+      if (param===""){
+        setdisplaydata(tabledata);
+        return
+      }
+
+      tabledata.forEach(item=>{      
+        if  (stringSimilarity.compareTwoStrings(search, item.tabledata.CatName)>=0.7 || stringSimilarity.compareTwoStrings(search, item.tabledata.CatId.toString())>=0.8){
+        searchresult.push(item);
+         }
+         
+       })
+       setdisplaydata(searchresult);
+    }
     
      return tabledata.length!=0  ? ( 
         <>
@@ -170,6 +194,7 @@ const ProductCategories = (props) => {
 
         <Container className="mt--7" fluid>
         <div className="col">
+
           
             <Card className="shadow">
               <CardHeader className="border-0">
@@ -177,6 +202,26 @@ const ProductCategories = (props) => {
                   <div className="col">
                     <h3 className="mb-0">Page visits</h3>
                   </div>
+
+                  {/* ************************Search Bar************************** */}
+                <FormGroup className="mb-3">
+                <InputGroup className="input-group-alternative">
+                  
+                  <Input
+                    placeholder="Search...."
+                    type="text"
+                    onChange={(e)=>{setsearch(e.target.value);setsearchresult([]);}}
+                  />
+                  <InputGroupAddon addonType="prepend">
+                    <InputGroupText>
+                    <button onClick={()=>{searchdata(search)}}><i className="ni ni-zoom-split-in" /></button>
+                    <button onClick={()=>{searchdata("")}}><i className="ni ni-fat-remove" /></button>
+                    
+                    </InputGroupText>
+                  </InputGroupAddon>
+                </InputGroup>
+              </FormGroup>
+
                   <div className="col text-right">
                   <Button
                       color="primary"
@@ -223,7 +268,7 @@ const ProductCategories = (props) => {
                   </tr>
                 </thead>
                 <tbody>
-                {tabledata && tabledata.map((data, index)=> {
+                {displaydata && displaydata.map((data, index)=> {
                     data=data.tabledata;
                     return(
                   <tr>

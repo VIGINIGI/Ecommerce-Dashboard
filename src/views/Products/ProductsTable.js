@@ -40,14 +40,21 @@ const Products= (props) => {
  const toggle = () =>  setModal(!modaldetail);  
  const toggleproduct = () =>  setModalproduct(!modalproduct); 
  const [tabledata, settabledata]= useState([]);
+
  const [newproduct,setnewproduct]=useState({});
  const [category,setcategory]=useState([]);
+ //for search 
+ var stringSimilarity = require("string-similarity");
+ const [search, setsearch]=useState("");
+ const [searchresult, setsearchresult]=useState([]);
+ const [displaydata,setdisplaydata]=useState([]);
 
  const [currentindex,setcurrentindex]=useState(0);
  newproduct.isfeatured=false;
  newproduct.isOnSale=false;
  newproduct.type="New";
  newproduct.category=[];
+ 
   const [tdata,settdata] = useState();
   const[searchTerm,setsearchTerm]=useState("");
   var categoryoutput="";
@@ -68,13 +75,15 @@ const Products= (props) => {
 
       )
     console.log("Props:",props.data);
-    
+      
     props.data.forEach(item=>{
      //  setrepairdata([...repairdata,item.data()]);
-      settabledata(state => [...state, item]);
+      // settabledata(state => [...state, item]);
+      tabledata.push(item);
      
      
     })
+    setdisplaydata(tabledata);
    }
 
       
@@ -84,6 +93,10 @@ const Products= (props) => {
     console.log(newproduct.category);
     if(isNaN(newproduct.MRP) && isNaN(newproduct.DiscPrice) ){
       NotificationManager.error("Enter Correct Price");
+      return;
+    }
+    if(newproduct.name==="" ){
+      NotificationManager.error("Enter Product Name");
       return;
     }
     var patt=/.jpg|.png/i;
@@ -106,7 +119,7 @@ const Products= (props) => {
     fileRef.put(setnewproduct.Image).then((upload) => {
       storageRef.child('Products/'+  '$'+newproduct.ProductID+"/" +setnewproduct.Image.name).getDownloadURL().then((url)=>{
         newproduct.Image=url;
-        db.collection("Product").doc(newproduct.ProductID).set(
+        db.collection("Product").doc(newproduct.ProductID+"_"+newproduct.name).set(
           newproduct
           )
           .then(() => {
@@ -184,6 +197,36 @@ const Products= (props) => {
     //         NotificationManager.error("Error ",error);
     //     });
     // }
+    function searchdata(param){
+      setsearchresult([]);
+      // var matches= stringSimilarity.findBestMatch(search, tabledata);
+      // console.log("Matches:",matches);
+      if (param===""){
+        setdisplaydata(tabledata);
+        return
+      }
+
+      tabledata.forEach(item=>{
+        console.log("Simililarity",stringSimilarity.compareTwoStrings(search, item.tabledata.name));
+        console.log(item);
+          item.tabledata.category.forEach(cat=>{
+            if (stringSimilarity.compareTwoStrings(search, cat)>0.8){
+              // setsearchresult(state => [...state, item]);
+              searchresult.push(item);
+              console.log("Similar cat",item);
+              return;
+            }
+          })
+      
+        if  (stringSimilarity.compareTwoStrings(search, item.tabledata.name)>=0.7 || stringSimilarity.compareTwoStrings(search, item.tabledata.ProductID.toString())>=0.8){
+        //  setsearchresult(state => [...state, item]);
+        searchresult.push(item);
+         }
+         
+       })
+       setdisplaydata(searchresult);
+       console.log(displaydata);
+    }
     
     return tabledata.length!=0  ? (
         <>
@@ -389,9 +432,24 @@ const Products= (props) => {
                     <h3 className="mb-0">Page visits</h3>
                     
                   </div>
-                  <input type="text" placeholder="Search.." onChange={(event)=>{
-                    setsearchTerm(event.target.value);
-                  }}/>
+                  {/* ************************Search Bar************************** */}
+                <FormGroup className="mb-3">
+                <InputGroup className="input-group-alternative">
+                  
+                  <Input
+                    placeholder="Search...."
+                    type="text"
+                    onChange={(e)=>{setsearch(e.target.value);setsearchresult([]);}}
+                  />
+                  <InputGroupAddon addonType="prepend">
+                    <InputGroupText>
+                    <button onClick={()=>{searchdata(search)}}><i className="ni ni-zoom-split-in" /></button>
+                    <button onClick={()=>{searchdata("")}}><i className="ni ni-fat-remove" /></button>
+                    
+                    </InputGroupText>
+                  </InputGroupAddon>
+                </InputGroup>
+              </FormGroup>
 
                  
                   
@@ -467,9 +525,10 @@ const Products= (props) => {
                 </thead>
                 <tbody>
 
+                
+                
+                {displaydata && displaydata.map((data, index)=> {
 
-                {tabledata && tabledata.map((data, index)=> {
-                  
                     data=data.tabledata;
                     return(
                       
@@ -606,7 +665,7 @@ const Products= (props) => {
         </>
     ):
     <div>
-    <span>Loading Data...</span>
+    <span>No result</span>
 
     <Spinner color="success" />
     <Spinner color="success" />

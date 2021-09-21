@@ -15,6 +15,8 @@ import {db} from "../../Firebase";
   const Custom = () => {
     const [customer, setcustomer] = useState([]);
     const [totalrows,settotalrows]=useState(0);
+
+   
     useEffect(  () => {
       if(customer.length==0){
       (async ()=>{
@@ -30,12 +32,33 @@ import {db} from "../../Firebase";
         //  setrepairdata([...repairdata,item.data()]);
          setcustomer(state => [...state, {tabledata,"ID":item.id}]);
         
+         
+          
+
+         
+        
         
        })
       
       })() 
     }
-    },[]);
+    },[])
+
+    function Dates(){
+      //const response= db.collection('Customer');
+      const current = new Date();
+      const date = `${current.getDate()}/${current.getMonth()+1}/${current.getFullYear()}`;
+      return(<span>{date}</span>)
+    }
+    
+   
+    
+    
+    
+      
+
+
+   
     return customer.length==totalrows && customer.length!=0  ?  
      (
         <>
@@ -46,7 +69,7 @@ import {db} from "../../Firebase";
           <div className="header-body">
             {/* Card stats */}
             <Row>
-              <CardDetail detail={{name:"No Of Users Registered Today ",number:123,percent:"12%",last:"Since Last 2 months"}}/>
+              <CardDetail detail={{name:"No Of Users Registered Today",number:123,percent:"12%",last:"Since Last 2 months"}}/>
               <CardDetail detail={{name:"No Of User Blocked ",number:12,percent:"11%",last:"Since Last 2 months"}}/>
               <Col lg="6" xl="3">
                 <Card className="card-stats mb-4 mb-xl-0 ">
@@ -60,7 +83,7 @@ import {db} from "../../Firebase";
                           Total No Of Users
                         </CardTitle>
                         <span className="h2 font-weight-bold mb-0">
-                          350,897
+                          {Dates()}
                         </span>
                       </div>
                       <Col className="col-auto">

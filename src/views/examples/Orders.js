@@ -10,7 +10,7 @@ import {
   import CardDetail from "views/Cards/CardDetail";
   //import Header from "components/Headers/Header.js";
   import {  CardBody, CardTitle,  Col } from "reactstrap";
-import Orders from "views/Orders/Orders";
+import Orders from "views/Orders/OrdersTable";
 import {db} from "../../Firebase";
   const Order = () => {
     const [orderdata, setorderdata] = useState([]);
