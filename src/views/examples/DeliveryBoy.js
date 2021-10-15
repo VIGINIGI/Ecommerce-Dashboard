@@ -21,8 +21,8 @@ import {db} from "../../Firebase";
     useEffect(  () => {
       if(deliveryboydata.length==0){
       (async ()=>{
-      const response= db.collection('DeliveryBoy');
-      const data=await response.get();
+      const response= db.collection('users');
+      const data=await response.where('type', '==', "DeliveryBoy").get();
       // console.log("data.docs",data.docs);
       const arraydata=data.docs;
       

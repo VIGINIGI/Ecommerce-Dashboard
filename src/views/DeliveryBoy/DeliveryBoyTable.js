@@ -31,11 +31,14 @@ import {
   // import CustomModal from "views/Cards/modal";
 import {Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
 import {db} from "../../Firebase";
+import {storageRef} from "../../Firebase";
 import { NotificationManager} from 'react-notifications';
-
 const DeliveryBoy = (props) => { 
   const [modaldetail, setModal] = useState(false);
-  const toggle = () =>  setModal(!modaldetail);  
+  const toggle = () =>  setModal(!modaldetail); 
+
+  const [kycmodal, setkycmodal]=useState(false);
+  const togglekyc=()=>setkycmodal(!kycmodal);
   
  const [popoverOpen, setPopoverOpen] = useState(false);
  const [popoveredit, setPopoveredit] = useState(false);
@@ -43,10 +46,17 @@ const DeliveryBoy = (props) => {
  const togglepopover = () => setPopoverOpen(!popoverOpen);
 
  const [tabledata, settabledata]= useState([]);
+ const [delcost,setdelcost]=useState();
  const [newdeliveryboy,setnewdeliveryboy]=useState({"phone":"","password":""});
-
+ const [kycdetail,setkycdetail]=useState({"front":"","back":""});
   const [currentindex,setcurrentindex]=useState(0);
  useEffect( () => {
+  db.collection("IDs").doc("PerDeliveryCost").get().then((value)=>{
+        
+    setdelcost(value.data());
+    console.log("delost:",value.data());
+  })
+  
    if( tabledata.length==0){
    props.data.forEach(item=>{
     //  setrepairdata([...repairdata,item.data()]);
@@ -58,15 +68,20 @@ const DeliveryBoy = (props) => {
  },[]);
  async function handleSubmit(e) {
   e.preventDefault()
-  if(newdeliveryboy.phone.length!=10 || newdeliveryboy.password.length<4){
-    NotificationManager.error("Error! \n Enter Correct Phone Number and Stronger Password ");
+  if(newdeliveryboy.phone.length!=13 || newdeliveryboy.password.length<4){
+    NotificationManager.error("Error! \n Enter Correct Phone Number(add +91) or Stronger Password ");
     return;
   }
   console.log(newdeliveryboy);
   newdeliveryboy.orderdelivered=0;
   newdeliveryboy.status="Active";
-  newdeliveryboy.kycstatus="Not Decided";
+  newdeliveryboy.kycstatus="false";
   newdeliveryboy.name="NULL";
+  newdeliveryboy.type="DeliveryBoy";
+  newdeliveryboy.TotalEarning=0;
+  var today = new Date(),
+  date = today.getDate() + '/' + (today.getMonth() + 1) + '/' + today.getFullYear();
+  newdeliveryboy.RegisteredOn=date;
   await db.collection("IDs").doc("DeliveryBoy").get().then((value)=>{
         
     let id=value.data().nextid
@@ -78,36 +93,61 @@ const DeliveryBoy = (props) => {
     )
   })
   
-    await db.collection("DeliveryBoy").doc(newdeliveryboy.id+"_"+newdeliveryboy.phone).set(
-    newdeliveryboy
-    )
-    .then(() => {
-      NotificationManager.success ('Delievery Boy Created');
-        console.log("Document successfully written!");
-        setnewdeliveryboy({"phone":"","password":""});
-    })
-    .catch((error) => {
-      NotificationManager.error(error);
-        console.error("Error writing document: ", error);
-        setnewdeliveryboy({"phone":"","password":""});
+    // await db.collection("DeliveryBoy").doc(newdeliveryboy.id+"_"+newdeliveryboy.phone).set(
+    // newdeliveryboy
+    // )
+    // .then(() => {
+    //   NotificationManager.success ('Delievery Boy Created');
+    //     console.log("Document successfully written!");
+    //     setnewdeliveryboy({"phone":"","password":""});
+    // })
+    // .catch((error) => {
+    //   NotificationManager.error(error);
+    //     console.error("Error writing document: ", error);
+    //     setnewdeliveryboy({"phone":"","password":""});
 
-    });
+    // });
+    await db.collection("users").doc(newdeliveryboy.phone).set(
+      newdeliveryboy
+      )
+      .then(() => {
+        NotificationManager.success ('Delievery Boy Created');
+          console.log("Document successfully written!");
+          db.collection("users").doc(newdeliveryboy.phone).collection.set()
+          setnewdeliveryboy({"phone":"","password":""});
+      })
+      .catch((error) => {
+        NotificationManager.error(error);
+          console.error("Error writing document: ", error);
+          setnewdeliveryboy({"phone":"","password":""});
+  
+      });
 
   
 }
-async function savedata(){
-  tabledata.map((data, index)=> {
-   db.collection("DeliveryBoy").doc(data.ID).update(
-    data.tabledata
+async function savedata(index){
+  // tabledata.map((data, index)=> {
+  //  db.collection("DeliveryBoy").doc(data.ID).update(
+  //   data.tabledata
+  // )
+  // .then(() => {
+  //   console.log("Document successfully updated!");
+  //   NotificationManager.success("Details Saved");
+  // }).catch((error) => {
+  //       console.error("Error writing document: ", error);
+  //       NotificationManager.error("Error ",error);
+  //   });
+  // })
+  db.collection("users").doc(tabledata[index].ID).update(
+    tabledata[index].tabledata
   )
   .then(() => {
-    console.log("Document successfully updated!");
     NotificationManager.success("Details Saved");
+    console.log("Document successfully updated!");
   }).catch((error) => {
+    NotificationManager.error(error);
         console.error("Error writing document: ", error);
-        NotificationManager.error("Error ",error);
     });
-  })
   }
 function showdetail(index){
   setcurrentindex(index);
@@ -115,7 +155,7 @@ function showdetail(index){
 
 }
 async function del(index){
-  db.collection("DeliveryBoy").doc(tabledata[index].ID).delete().then(() => {
+  db.collection("users").doc(tabledata[index].ID).delete().then(() => {
     NotificationManager.success("Deleted")
 }).catch((error) => {
     NotificationManager.error(error)
@@ -123,7 +163,7 @@ async function del(index){
 }
 async function edit(index){
   
- await db.collection("DeliveryBoy").doc(tabledata[index].ID).update(
+ await db.collection("users").doc(tabledata[index].ID).update(
     {
       "phone":newdeliveryboy.phone,
       "password":newdeliveryboy.password,
@@ -140,8 +180,20 @@ async function edit(index){
         setnewdeliveryboy({});
     });
 }
+function kycfunction(index){
+  setcurrentindex(index);
+  storageRef.child('users/kyc/aadhar/'+  tabledata[index].ID+"/" +"front").getDownloadURL().then((url)=>{
+    kycdetail.front=url;
+    console.log("Front url:",url);
+    })
+    storageRef.child('users/kyc/aadhar/'+  tabledata[index].ID+"/" +"back").getDownloadURL().then((url)=>{
+      kycdetail.back=url;
+      })
+      console.log("KYCdtail:",kycdetail);
+  togglekyc();
+}
 
-return tabledata.length!=0  ? (
+return tabledata.length!=0 && delcost!=undefined ? (
         <>
         <div>
   {/* ********************Detail modal*********************************************************************** */}
@@ -166,7 +218,7 @@ return tabledata.length!=0  ? (
           <br></br>
           Front-Image:<img src=""></img>
           <br></br>
-          Back-Image:<img></img>
+          Back-Image:<img src=""></img>
           <br></br>
            </>
         </ModalBody>
@@ -176,7 +228,44 @@ return tabledata.length!=0  ? (
         </ModalFooter>
       </Modal>
     </div>
-
+    {/* **********************************KYC Modal************************************ */}
+    <Modal isOpen={kycmodal} toggle={togglekyc} >
+        <ModalHeader toggle={togglekyc}>KYC Details</ModalHeader>
+        <ModalBody>
+         <>
+         <div className="d-flex justify-content-center">General INFO</div>
+          Name:{tabledata[currentindex].tabledata.name}
+          <br></br>
+          PhoneNo:{tabledata[currentindex].tabledata.phone}
+          <br></br>
+          City:Mumbai
+          <br></br>
+          Pincode:400091
+          <br></br>
+          <br></br>
+          <div className="d-flex justify-content-center">KYC: {tabledata[currentindex].tabledata.status} </div>
+          Name(As per Aadhar):
+          <br></br>
+          Aadhar Number:9082654321
+          <br></br>
+          Front-Image:<img src={kycdetail.front} alt="Front Image"></img>
+          <br></br>
+          Back-Image:<img src={kycdetail.back} alt="Back Image"></img>
+          <br></br>
+           </>
+        </ModalBody>
+        <ModalFooter>
+        <Button color="success" onClick={(e)=>{
+          let temp = [...tabledata];     // create the copy of state array
+          temp[currentindex].tabledata.isKYC = 'True';                  //new value
+          settabledata(temp);
+          savedata(currentindex);
+          togglekyc();
+          NotificationManager.success ('KYC APPROVED');
+          }}>Approve</Button>
+          <Button color="danger" onClick={togglekyc}>Cancel</Button>
+        </ModalFooter>
+      </Modal>
     <div>
       {/* *************************To Add Delivery Boy***************************** */}
     <Popover placement="bottom" isOpen={popoverOpen} target="Popover1" toggle={togglepopover}>
@@ -233,6 +322,7 @@ return tabledata.length!=0  ? (
                     <h3 className="mb-0">Page visits</h3>
                   </div>
                   <div className="col text-right">
+
                   <Button
                       color="primary"
                       size="sm"
@@ -265,6 +355,43 @@ return tabledata.length!=0  ? (
                     >
                       SAVE
                     </Button>
+                  </div>
+                </Row>
+                <Row className="align-items-center">
+                <div className="col-3 align-items-right">
+                <Form role="form" >
+                            <FormGroup className="mb-3">
+                              <InputGroup className="input-group-alternative">
+                                
+                                <Input
+                                  placeholder={delcost.DeliveryCost===undefined?"Loading":delcost.DeliveryCost}
+                                  type="tel"
+                                  pattern= "[0-9]+"
+                                  onChange={(e)=>{
+                                    delcost.DeliveryCost=e.target.value;
+                                  }}
+                                  required
+                                />
+                                <InputGroupAddon addonType="prepend">
+                                  <InputGroupText>
+                                  <button  onClick={(e)=>{
+                                    e.preventDefault();
+                                    db.collection("IDs").doc("PerDeliveryCost").update(
+                                      delcost
+                                    ).then(()=>{
+                                      NotificationManager.success("Updated")
+                                    }).catch((error) => {
+                                      NotificationManager.error("Error ",error);
+                                  });
+                                  }
+                                  }>
+                                    <i className="ni ni-check-bold" />
+                                    </button>
+                                  </InputGroupText>
+                                </InputGroupAddon>
+                              </InputGroup>
+                            </FormGroup>
+                            </Form>
                   </div>
                 </Row>
               </CardHeader>
@@ -301,44 +428,19 @@ return tabledata.length!=0  ? (
                       {data.orderdelivered}
                     </td>
                     <td >
-                    <UncontrolledDropdown>
-                        <DropdownToggle
-                          
-                          href="#pablo"
-                          role="button"
-                          size="sm"
-                          color=""
-                          onClick={(e) => e.preventDefault()}
-                        >
-                          {data.kycstatus}
-                          {/* <i className="fas fa-ellipsis-v" /> */}
-                        </DropdownToggle>
-                        <DropdownMenu className="dropdown-menu-arrow" right>
-                          <DropdownItem
-                            href="#pablo"
-                            onClick={(e)=>{
-                              e.preventDefault();
-                              let temp = [...tabledata];     // create the copy of state array
-                              temp[index].tabledata.kycstatus = 'Success';                  //new value
-                              settabledata(temp);
-                            }}
-                          >
-                            Success
-                          </DropdownItem>
-                          <DropdownItem
-                            href="#pablo"
-                            onClick={(e)=>{
-                              e.preventDefault();
-                              let temp = [...tabledata];     // create the copy of state array
-                              temp[index].tabledata.kycstatus = 'Rejected';                  //new value
-                              settabledata(temp);
-                            }}
-                          >
-                            Rejected
-                          </DropdownItem>
-                          
-                        </DropdownMenu>
-                      </UncontrolledDropdown>
+                    {data.isKYC==="false"?    
+                      <Button
+                      color="primary"
+                      
+                      onClick={()=>{kycfunction(index); }}
+                      size="sm"
+                    >KYC</Button>
+                    :
+                    <><><Badge color="" className="badge-dot mr-4">
+                    <i className="bg-success" />
+                    KYC APPROVED
+                  </Badge></></>
+                    }
                     </td>
                     <td>
                     <UncontrolledDropdown>

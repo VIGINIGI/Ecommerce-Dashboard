@@ -57,7 +57,6 @@ const Customer = (props) => {
  const [search, setsearch]=useState("");
  const [searchresult, setsearchresult]=useState([]);
  const [displaydata,setdisplaydata]=useState([]);
-
   useEffect( () => {
     if( tabledata.length==0){
     console.log("Props:",props.data);
@@ -67,9 +66,11 @@ const Customer = (props) => {
      
     })
    }
+
     setdisplaydata(tabledata);  
  
   },[]);
+
   async function handleSubmit(e) {
     e.preventDefault()
     if(newcustomer.phonenumber.length!=10 || newcustomer.password.length<4){
@@ -79,7 +80,9 @@ const Customer = (props) => {
     console.log(newcustomer);
     
     newcustomer.status="Active";
-    newcustomer.Date="12/03/21";
+    var today = new Date(),
+    date = today.getDate() + '/' + (today.getMonth() + 1) + '/' + today.getFullYear();
+    newcustomer.Date=date;
     newcustomer.username="NULL";
     await db.collection("IDs").doc("Customer").get().then((value)=>{
         
@@ -105,20 +108,33 @@ const Customer = (props) => {
   
     
   }
-  async function savedata(){
-    tabledata.map((data, index)=> {
-     db.collection("Customer").doc(data.ID).update(
-      data.tabledata
-    )
-    .then(() => {
-      NotificationManager.success("Details Saved")
-      console.log("Document successfully updated!");
-    }).catch((error) => {
-      NotificationManager.error(error);
-          console.error("Error writing document: ", error);
-      });
-    })
+  async function savedata(index){
+    // tabledata.map((data, index)=> {
+    //  db.collection("Customer").doc(data.ID).update(
+    //   data.tabledata
+    // )
+    // .then(() => {
+    //   NotificationManager.success("Details Saved")
+    //   console.log("Document successfully updated!");
+    // }).catch((error) => {
+    //   NotificationManager.error(error);
+    //       console.error("Error writing document: ", error);
+    //   });
+    // })
+    
+      db.collection("users").doc(tabledata[index].ID).update(
+       tabledata[index].tabledata
+     )
+     .then(() => {
+       NotificationManager.success("Details Saved")
+       console.log("Document successfully updated!");
+     }).catch((error) => {
+       NotificationManager.error(error);
+           console.error("Error writing document: ", error);
+       });
+     
     }
+
 
     function showdetail(index){
       setcurrentindex(index);
@@ -126,7 +142,7 @@ const Customer = (props) => {
     
     }
     async function del(index){
-      db.collection("Customer").doc(tabledata[index].ID).delete().then(() => {
+      db.collection("users").doc(tabledata[index].ID).delete().then(() => {
         NotificationManager.success("Deleted")
     }).catch((error) => {
         NotificationManager.error(error)
@@ -306,7 +322,7 @@ const Customer = (props) => {
               <Table className="align-items-center table-flush" responsive>
                 <thead className="thead-light">
                   <tr>
-                    <th scope="col">User Id</th>
+                    {/* <th scope="col">User Id</th> */}
                     <th scope="col">UserName</th>
                     <th scope="col">User PhoneNo</th>
                     <th scope="col">Date Of Registered</th>
@@ -319,20 +335,16 @@ const Customer = (props) => {
                     data=data.tabledata;
                     return(
                   <tr>
-                    <td id="userid">
-                    {data.userid}
-
-                   
-                
-                          
-                    </td>
-                    <td id="username">{data.username}</td>
+                    {/* <td id="userid">
+                    {data.userid}    
+                    </td> */}
+                    <td id="username">{data["Full Name"]}</td>
                     
                     <td id="phonenumber">
-                    {data.phonenumber}
+                    {data["Phone Number"]}
                     </td>
                     <td id="Date">
-                    {data.Date}
+                    {data["Registered On"]}
                     </td>
                     <td >
                     <div>
