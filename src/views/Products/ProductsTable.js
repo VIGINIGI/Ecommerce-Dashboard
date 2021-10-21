@@ -109,9 +109,9 @@ const Products= (props) => {
       )
     })
     newproduct.status="Active";
-    const fileRef = storageRef.child('Products/'+  '$'+newproduct.ProductID+"/" +setnewproduct.Image.name)
+    const fileRef = storageRef.ref().child('Products/'+  '$'+newproduct.ProductID+"/" +setnewproduct.Image.name)
     fileRef.put(setnewproduct.Image).then((upload) => {
-      storageRef.child('Products/'+  '$'+newproduct.ProductID+"/" +setnewproduct.Image.name).getDownloadURL().then((url)=>{
+      storageRef.ref().child('Products/'+  '$'+newproduct.ProductID+"/" +setnewproduct.Image.name).getDownloadURL().then((url)=>{
         newproduct.Image=url;
         db.collection("Product").doc(newproduct.ProductID+"_"+newproduct.name).set(
           newproduct
@@ -302,9 +302,9 @@ const Products= (props) => {
               </FormGroup>
               <FormGroup>
         <Label for="type">Product Type</Label>
-        <Input type="select"  id="type" onChange={(e)=>{newproduct.type=e.target.value}}>
-          <option>New</option>
-          <option>Refurbrished</option>
+        <Input type="select"   onChange={(e)=>{newproduct.type=e.target.value}}>
+          <option value="New">New</option>
+          <option value="Refurbrished">Refurbrished</option>
         </Input>
       </FormGroup>
       <div className="custom-control custom-checkbox mb-3">

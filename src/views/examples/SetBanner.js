@@ -10,15 +10,15 @@ import {
   import CardDetail from "views/Cards/CardDetail";
   //import Header from "components/Headers/Header.js";
   import {  CardBody, CardTitle,  Col } from "reactstrap";
-  import Products from "views/Products/ProductsTable";
+  import Banner from "views/Banners/Banner.js";
   import {db} from "../../Firebase";
   const SetBanner = () => {
-    const [product, setproduct] = useState([]);
+    const [banner, setbanner] = useState([]);
     const [totalrows,settotalrows]=useState(0);
     useEffect(  () => {
-      if(product.length==0){
+      if(banner.length==0){
       (async ()=>{
-      const response= db.collection('Product');
+      const response= db.collection('Banners');
       const data=await response.get();
       // console.log("data.docs",data.docs);
       const arraydata=data.docs;
@@ -28,7 +28,7 @@ import {
         console.log(item.id);
         let tabledata=item.data();
         //  setrepairdata([...repairdata,item.data()]);
-         setproduct(state => [...state, {tabledata,"ID":item.id}]);
+         setbanner(state => [...state, {tabledata,"ID":item.id}]);
         
         
        })
@@ -36,7 +36,7 @@ import {
       })() 
     }
     },[]);
-    return product.length==totalrows  ?  (
+    return banner.length==totalrows  ?  (
         <>
         {/* Cards above Table */}
         <>
@@ -53,7 +53,7 @@ import {
       </div>
     </>
     {/* ****************************************************Table ****************************************** */}
-    <Products  data={product} />
+    <Banner  data={banner} />
         
           </>
     ):

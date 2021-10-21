@@ -10,7 +10,7 @@ import {
     DropdownItem,
     UncontrolledDropdown,
     DropdownToggle,
-   
+    Spinner,
     Pagination,
     PaginationItem,
     PaginationLink,
@@ -128,14 +128,35 @@ function searchdata(param){
    setdisplaydata(searchresult);
    console.log(displaydata);
 }
-    return(  
+return tabledata.length!=0  ? (
         <>
         <div>
       {/* <Button color="danger" onClick={toggle}>{buttonLabel}</Button> */}
       <Modal isOpen={modaldetail} toggle={toggle} >
-        <ModalHeader toggle={toggle}>Modal title</ModalHeader>
+        <ModalHeader toggle={toggle}>Show detail</ModalHeader>
         <ModalBody>
-          Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+        {
+          <>
+            <thead className="thead-light">
+            <tr>
+              <th>Field name</th>
+              <th>value</th>
+              </tr> 
+            </thead>
+            <tbody>
+              <tr>
+              {/* for([key, val] of Object.entries(dic)) {
+                  console.log(key, val);
+                } */}
+                <th>Accessories</th>
+                <td>{tabledata[currentindex].tabledata.Accessories.map((key,value)=>{
+                  return(<>{value+","}</>)
+                })}</td>
+              </tr>
+            </tbody>
+            </>
+          
+        }
         </ModalBody>
         <ModalFooter>
           <Button color="primary" onClick={toggle}>Do Something</Button>{' '}
@@ -524,6 +545,15 @@ function searchdata(param){
           </div>
           </Container>
         </>
-    );
+    ):
+    <div>
+    <span>Loading Data...</span>
+
+    <Spinner color="success" />
+    <Spinner color="success" />
+    <Spinner color="success" />
+    <Spinner color="success" />
+    <Spinner color="success" />
+    </div>
 }
 export default SellReq;

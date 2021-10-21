@@ -182,15 +182,18 @@ async function edit(index){
 }
 function kycfunction(index){
   setcurrentindex(index);
-  storageRef.child('users/kyc/aadhar/'+  tabledata[index].ID+"/" +"front").getDownloadURL().then((url)=>{
+  storageRef.ref().child('users/kyc/aadhar/'+  tabledata[index].ID+"/" +"front").getDownloadURL().then((url)=>{
     kycdetail.front=url;
     console.log("Front url:",url);
-    })
-    storageRef.child('users/kyc/aadhar/'+  tabledata[index].ID+"/" +"back").getDownloadURL().then((url)=>{
+    storageRef.ref().child('users/kyc/aadhar/'+  tabledata[index].ID+"/" +"back").getDownloadURL().then((url)=>{
       kycdetail.back=url;
-      })
       console.log("KYCdtail:",kycdetail);
-  togglekyc();
+      togglekyc();
+      })
+    })
+    
+      
+  
 }
 
 return tabledata.length!=0 && delcost!=undefined ? (
