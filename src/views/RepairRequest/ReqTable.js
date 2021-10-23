@@ -45,7 +45,11 @@ const ReqTable = (props) => {
  const [search, setsearch]=useState("");
  const [searchresult, setsearchresult]=useState([]);
  const [displaydata,setdisplaydata]=useState([]);
+ const [cards,setcards]=useState({})
  useEffect( () => {
+
+  
+
    if( tabledata.length==0){
    console.log("Props:",props.data);
    props.data.forEach(item=>{
@@ -87,11 +91,30 @@ tabledata.map((data, index)=> {
   });
 })
 }
+ function saverequest(index){
+  db.collection("RepairRequest").doc(tabledata[index].ID).update(
+    tabledata[index].tabledata
+  )
+  .then(() => {
+    console.log("Document successfully updated!");
+  }).catch((error) => {
+        console.error("Error writing document: ", error);
+    });
+  db.collection("users").doc(tabledata[index].tabledata.userId).collection("RepairRequests").doc(tabledata[index].ID).update(
+    tabledata[index].tabledata
+  
+
+  ).then(() => {
+    console.log("Document users updated !");
+  }).catch((error) => {
+        console.error("Error writing document: ", error);
+    });
+}
 // delivery boy
 async function getdeliveryboy(index){
   setcurrentindex(index);
-  const response= db.collection('DeliveryBoy');
-      const data=await response.get();
+  const response= db.collection('users');
+      const data=await response.where('type', '==', "DeliveryBoy").get();
       const arraydata=data.docs;
       console.log("Testing:",arraydata);
       settotalrows(arraydata.length);
@@ -101,11 +124,10 @@ async function getdeliveryboy(index){
         let tabledata=item.data();
         //  setrepairdata([...repairdata,item.data()]);
          setdeliveryboydata(state => [...state, {tabledata,"ID":item.id}]);
-        
-        
        })
       }
   }
+  
   function searchdata(param){
     setsearchresult([]);
     // var matches= stringSimilarity.findBestMatch(search, tabledata);
@@ -173,11 +195,22 @@ async function getdeliveryboy(index){
                       href="#pablo"
                       onClick={()=>{
                         let temp = [...tabledata];    
+                        let tempdeliveryboy=[...deliveryboydata]
+
                         temp[currentindex].tabledata.deliveryBoyId = data.ID;
                         temp[currentindex].tabledata.deliveryBoyName = data.tabledata.name;    
-                        temp[currentindex].tabledata.deliveryBoyPhoneNumber = data.tabledata.phone;                  
+                        temp[currentindex].tabledata.deliveryBoyPhoneNumber = data.tabledata.phone;
+
+                        tempdeliveryboy[index].tabledata.orderdelivered=tempdeliveryboy[index].tabledata.orderdelivered+1;
+                        //add delivery cost
+                        db.collection("IDs").doc("PerDeliveryCost").get().then((value)=>{
+                          console.log("DeliveryCost:",value.data().DeliveryCost);
+                          temp[currentindex].tabledata.DeliveryCost=value.data().DeliveryCost;
+                          tempdeliveryboy[index].tabledata.TotalEarning=tempdeliveryboy[index].tabledata.TotalEarning+value.data().DeliveryCost;
+                          
                         settabledata(temp);
-                        
+                        setdeliveryboydata(tempdeliveryboy);
+                        //updating repair request
                         db.collection("RepairRequest").doc(tabledata[currentindex].ID).update(
                           tabledata[currentindex].tabledata
                         )
@@ -188,6 +221,32 @@ async function getdeliveryboy(index){
                               console.error("Error writing document: ", error);
                               NotificationManager.Error("Error In Delivery Boy Assignment");
                           });
+                          saverequest(currentindex);
+                          //save delivery boy data
+                          db.collection("users").doc(deliveryboydata[index].ID).update(
+                            {
+                              "TotalEarning":tempdeliveryboy[index].tabledata.TotalEarning,
+                              "orderdelivered":tempdeliveryboy[index].tabledata.orderdelivered,
+                              
+                            }
+                          )
+                          .then(() => {
+                            console.log("DeliveryBoy successfully updated!");
+                          }).catch((error) => {
+                                console.error("Error writing document: ", error);
+                            });
+                          //save deliveryboy data collection
+                          db.collection("users").doc(data.ID).collection("MyOrders").doc(tabledata[currentindex].ID).set(
+                            tabledata[currentindex].tabledata
+                          
+                        
+                          ).then(() => {
+                            console.log("Document DeliveryBoy updated !");
+                          }).catch((error) => {
+                                console.error("Error writing document: ", error);
+                            });
+                        })    
+                      
                         setModaldelievery(!modaldelievery);
 
                       }}
@@ -273,12 +332,13 @@ async function getdeliveryboy(index){
                     <th scope="col">Request Number</th>
                     <th scope="col">UserName</th>
                     <th scope="col">Set Price</th>
+                    <th scope="col">Status</th>
                     <th scope="col">PhoneNumber</th>
                     <th scope="col">PaymentMode</th>
                     <th scope="col">Mobile Name</th>
                     <th scope="col">Date</th>
                     <th scope="col">Details</th>  
-                    <th scope="col">Status</th>
+                    
                     <th scope="col">AssignDelieveryBoy</th>
                     <th scope="col" />
                   </tr>
@@ -303,20 +363,85 @@ async function getdeliveryboy(index){
                     <div className="width:100px">
                     <InputGroup>
                       <Input
-                    placeholder={data.setprice}
+                    placeholder={data.repairCost}
                     className="width:100"
                     type="text"
                     onChange={
                       (e)=>{
+                        
                         let temp = [...tabledata];    
-                        temp[index].tabledata.setprice = e.target.value;                  
+                        temp[index].tabledata.repairCost = e.target.value;                  
                         settabledata(temp);
                       }
                     }
                   />
                   </InputGroup>
+                  {data.OrderStatus!=="Accepted"?
+                  <ul className="list-inline m-0">
+                  <li className="list-inline-item">
+                    <button className="btn btn-success btn-sm rounded-0" type="button" data-toggle="tooltip" data-placement="top" title="Accept" onClick={()=>{
+                        let temp = [...tabledata];     // create the copy of state array
+                        temp[index].tabledata.OrderStatus = 'Accepted';                  //new value
+                        settabledata(temp); 
+                        saverequest(index);
+                    }}>Set <i className="fa fa-check" /></button>
+                  </li>
+                  </ul>
+                  :
+                  <></>
+                }
                   </div>
 
+                    </td>
+                    <td>
+                    <UncontrolledDropdown>
+                        <DropdownToggle
+                          
+                          href="#pablo"
+                          role="button"
+                          size="sm"
+                          color=""
+                          onClick={(e) => e.preventDefault()}
+                        >
+                          {data.OrderStatus}
+                          {/* <i className="fas fa-ellipsis-v" /> */}
+                        </DropdownToggle>
+                        <DropdownMenu className="dropdown-menu-arrow" right>
+                          <DropdownItem
+                            href="#pablo"
+                            onClick={()=>{
+                              let temp = [...tabledata];     // create the copy of state array
+                              temp[index].tabledata.OrderStatus = 'Pending';                  //new value
+                              settabledata(temp);
+                              saverequest(index);
+                            }}
+                          >
+                            Pending
+                          </DropdownItem>
+                          <DropdownItem
+                            href="#pablo"
+                            onClick={()=>{
+                              let temp = [...tabledata];     // create the copy of state array
+                              temp[index].tabledata.OrderStatus = 'Accepted';                  //new value
+                              settabledata(temp);
+                              saverequest(index);
+                            }}
+                          >
+                            Accepted
+                          </DropdownItem>
+                          <DropdownItem
+                            href="#pablo"
+                            onClick={()=>{
+                              let temp = [...tabledata];     // create the copy of state array
+                              temp[index].tabledata.OrderStatus = 'Cancelled';                  //new value
+                              settabledata(temp);
+                              saverequest(index);
+                            }}
+                          >
+                            Cancelled
+                          </DropdownItem>
+                        </DropdownMenu>
+                      </UncontrolledDropdown>
                     </td>
                     <td>
                       {data.userPhoneNumber}
@@ -338,55 +463,10 @@ async function getdeliveryboy(index){
                       size="sm"
                     >Show Details</Button>
                     </td>
+                    
                     <td>
-                    <UncontrolledDropdown>
-                        <DropdownToggle
-                          
-                          href="#pablo"
-                          role="button"
-                          size="sm"
-                          color=""
-                          onClick={(e) => e.preventDefault()}
-                        >
-                          {data.OrderStatus}
-                          {/* <i className="fas fa-ellipsis-v" /> */}
-                        </DropdownToggle>
-                        <DropdownMenu className="dropdown-menu-arrow" right>
-                          <DropdownItem
-                            href="#pablo"
-                            onClick={()=>{
-                              let temp = [...tabledata];     // create the copy of state array
-                              temp[index].tabledata.status = 'Request In Review';                  //new value
-                              settabledata(temp);
-                            }}
-                          >
-                            Pending
-                          </DropdownItem>
-                          <DropdownItem
-                            href="#pablo"
-                            onClick={()=>{
-                              let temp = [...tabledata];     // create the copy of state array
-                              temp[index].tabledata.status = 'Accepted';                  //new value
-                              settabledata(temp);
-                            }}
-                          >
-                            Accepted
-                          </DropdownItem>
-                          <DropdownItem
-                            href="#pablo"
-                            onClick={()=>{
-                              let temp = [...tabledata];     // create the copy of state array
-                              temp[index].tabledata.status = 'Cancelled';                  //new value
-                              settabledata(temp);
-                            }}
-                          >
-                            Cancelled
-                          </DropdownItem>
-                        </DropdownMenu>
-                      </UncontrolledDropdown>
-                    </td>
-                    <td>
-                      {data.deliveryBoyId!=undefined ?
+                      {data.OrderStatus==="Accepted"?
+                      data.deliveryBoyId!=undefined ?
                       <><Badge color="" className="badge-dot mr-4">
                       <i className="bg-success" />
                       {data.deliveryBoyId}
@@ -397,6 +477,8 @@ async function getdeliveryboy(index){
                       onClick={()=>{toggledelievery(); getdeliveryboy(index);}}
                       size="sm"
                     >Assign DeliveryBoy</Button>
+                    :
+                    <>Pending Approval</>
                     }
                     
                     

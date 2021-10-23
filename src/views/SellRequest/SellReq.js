@@ -10,7 +10,7 @@ import {
     DropdownItem,
     UncontrolledDropdown,
     DropdownToggle,
-   
+    Spinner,
     Pagination,
     PaginationItem,
     PaginationLink,
@@ -72,10 +72,30 @@ const [displaydata,setdisplaydata]=useState([]);
       });
     })
     }
-async function getdeliveryboy(index){
+    function saverequest(index){
+      db.collection("SellRequest").doc(tabledata[index].ID).update(
+        tabledata[index].tabledata
+      )
+      .then(() => {
+        console.log("Document successfully updated!");
+      }).catch((error) => {
+            console.error("Error writing document: ", error);
+        });
+      db.collection("users").doc(tabledata[index].tabledata.userId).collection("SellRequests").doc(tabledata[index].ID).update(
+        tabledata[index].tabledata
+      
+    
+      ).then(() => {
+        console.log("Document users updated !");
+      }).catch((error) => {
+            console.error("Error writing document: ", error);
+        });
+    }
+    
+    async function getdeliveryboy(index){
       setcurrentindex(index);
-      const response= db.collection('DeliveryBoy');
-          const data=await response.get();
+      const response= db.collection('users');
+          const data=await response.where('type', '==', "DeliveryBoy").get();
           const arraydata=data.docs;
           console.log("Testing:",arraydata);
           settotalrows(arraydata.length);
@@ -85,11 +105,9 @@ async function getdeliveryboy(index){
             let tabledata=item.data();
             //  setrepairdata([...repairdata,item.data()]);
              setdeliveryboydata(state => [...state, {tabledata,"ID":item.id}]);
-            
-            
            })
           }
-}
+      }
 function searchdata(param){
   setsearchresult([]);
   // var matches= stringSimilarity.findBestMatch(search, tabledata);
@@ -110,14 +128,35 @@ function searchdata(param){
    setdisplaydata(searchresult);
    console.log(displaydata);
 }
-    return(  
+return tabledata.length!=0  ? (
         <>
         <div>
       {/* <Button color="danger" onClick={toggle}>{buttonLabel}</Button> */}
       <Modal isOpen={modaldetail} toggle={toggle} >
-        <ModalHeader toggle={toggle}>Modal title</ModalHeader>
+        <ModalHeader toggle={toggle}>Show detail</ModalHeader>
         <ModalBody>
-          Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+        {
+          <>
+            <thead className="thead-light">
+            <tr>
+              <th>Field name</th>
+              <th>value</th>
+              </tr> 
+            </thead>
+            <tbody>
+              <tr>
+              {/* for([key, val] of Object.entries(dic)) {
+                  console.log(key, val);
+                } */}
+                <th>Accessories</th>
+                <td>{tabledata[currentindex].tabledata.Accessories.map((key,value)=>{
+                  return(<>{value+","}</>)
+                })}</td>
+              </tr>
+            </tbody>
+            </>
+          
+        }
         </ModalBody>
         <ModalFooter>
           <Button color="primary" onClick={toggle}>Do Something</Button>{' '}
@@ -155,22 +194,60 @@ function searchdata(param){
                       href="#pablo"
                       onClick={()=>{
                         let temp = [...tabledata];    
+                        let tempdeliveryboy=[...deliveryboydata]
+
                         temp[currentindex].tabledata.deliveryBoyId = data.ID;
                         temp[currentindex].tabledata.deliveryBoyName = data.tabledata.name;    
                         temp[currentindex].tabledata.deliveryBoyPhoneNumber = data.tabledata.phone;
-              
-                        settabledata(temp);
+
+                        tempdeliveryboy[index].tabledata.orderdelivered=tempdeliveryboy[index].tabledata.orderdelivered+1;
+                        //add delivery cost
+                        db.collection("IDs").doc("PerDeliveryCost").get().then((value)=>{
+                          console.log("DeliveryCost:",value.data().DeliveryCost);
+                          temp[currentindex].tabledata.DeliveryCost=value.data().DeliveryCost;
+                          tempdeliveryboy[index].tabledata.TotalEarning=tempdeliveryboy[index].tabledata.TotalEarning+value.data().DeliveryCost;
+
+                          settabledata(temp);
+                          setdeliveryboydata(tempdeliveryboy);
+  
+                          //save delivery boy data
+                          db.collection("users").doc(deliveryboydata[index].ID).update(
+                            {
+                              "TotalEarning":tempdeliveryboy[index].tabledata.TotalEarning,
+                              "orderdelivered":tempdeliveryboy[index].tabledata.orderdelivered,
+                              
+                            }
+                          )
+                          .then(() => {
+                            console.log("DeliveryBoy successfully updated!");
+                          }).catch((error) => {
+                                console.error("Error writing document: ", error);
+                            });
+  
+                          db.collection("SellRequest").doc(tabledata[currentindex].ID).update(
+                            tabledata[currentindex].tabledata
+                          )
+                          .then(() => {
+                            console.log("Document successfully updated!");
+                            NotificationManager.success("DeliveryBoy Assigned");
+                          }).catch((error) => {
+                                console.error("Error writing document: ", error);
+                                NotificationManager.Error("Error In Delivery Boy Assignment");
+                            });
+                            saverequest(currentindex);
+                            //save deliveryboy data collection
+                          db.collection("users").doc(data.ID).collection("MyOrders").doc(tabledata[currentindex].ID).set(
+                            tabledata[currentindex].tabledata
+                          
                         
-                        db.collection("SellRequest").doc(tabledata[currentindex].ID).update(
-                          tabledata[currentindex].tabledata
-                        )
-                        .then(() => {
-                          console.log("Document successfully updated!");
-                          NotificationManager.success("DeliveryBoy Assigned");
-                        }).catch((error) => {
-                              console.error("Error writing document: ", error);
-                              NotificationManager.Error("Error In Delivery Boy Assignment");
-                          });
+                          ).then(() => {
+                            console.log("Document DeliveryBoy updated !");
+                          }).catch((error) => {
+                                console.error("Error writing document: ", error);
+                            });
+                        })
+
+                          
                         setModaldelievery(!modaldelievery);
 
                       }}
@@ -295,14 +372,14 @@ function searchdata(param){
                     }
                   />
                   </InputGroup>
-                  {data.status!=="Accepted"?
+                  {data.OrderStatus!=="Accepted"?
                   <ul className="list-inline m-0">
                   <li className="list-inline-item">
                     <button className="btn btn-warning btn-sm rounded-0" type="button" data-toggle="tooltip" data-placement="top" title="Accept" onClick={()=>{
                         let temp = [...tabledata];     // create the copy of state array
                         temp[index].tabledata.OrderStatus = 'Pending';                  //new value
                         settabledata(temp); 
-                        savedata();
+                        saverequest(index);
                     }}>Negotiate <i className="fa fa-check" /></button>
                   </li>
                   </ul>
@@ -333,8 +410,9 @@ function searchdata(param){
                             href="#pablo"
                             onClick={()=>{
                               let temp = [...tabledata];     // create the copy of state array
-                              temp[index].tabledata.OrderStatus = 'Request in Review';                  //new value
+                              temp[index].tabledata.OrderStatus = 'Pending';                  //new value
                               settabledata(temp);
+                              saverequest(index);
                             }}
                           >
                             Pending
@@ -345,7 +423,7 @@ function searchdata(param){
                               let temp = [...tabledata];     // create the copy of state array
                               temp[index].tabledata.OrderStatus = 'Accepted';                  //new value
                               settabledata(temp);
-                              savedata();
+                              saverequest(index);
                             }}
                           >
                             Accepted
@@ -354,8 +432,9 @@ function searchdata(param){
                             href="#pablo"
                             onClick={()=>{
                               let temp = [...tabledata];     // create the copy of state array
-                              temp[index].tabledata.OrderStatus= 'Cancelled';                  //new value
+                              temp[index].tabledata.OrderStatus = 'Cancelled';                  //new value
                               settabledata(temp);
+                              saverequest(index);
                             }}
                           >
                             Cancelled
@@ -385,7 +464,9 @@ function searchdata(param){
                     </td>
                     
                     <td>
-                    {data.deliveryBoyId!=undefined ?
+                    {
+                      data.OrderStatus==="Accepted"?
+                    data.deliveryBoyId!=undefined ?
                       <><Badge color="" className="badge-dot mr-4">
                       <i className="bg-success" />
                       {data.deliveryBoyId}
@@ -396,6 +477,8 @@ function searchdata(param){
                       onClick={()=>{toggledelievery(); getdeliveryboy(index);}}
                       size="sm"
                     >Assign DeliveryBoy</Button>
+                    :
+                    <>Pending Approval</>
                     }
                     
                     </td>
@@ -462,6 +545,15 @@ function searchdata(param){
           </div>
           </Container>
         </>
-    );
+    ):
+    <div>
+    <span>Loading Data...</span>
+
+    <Spinner color="success" />
+    <Spinner color="success" />
+    <Spinner color="success" />
+    <Spinner color="success" />
+    <Spinner color="success" />
+    </div>
 }
 export default SellReq;

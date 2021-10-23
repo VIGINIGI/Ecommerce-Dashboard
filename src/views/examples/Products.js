@@ -15,6 +15,8 @@ import {
   const Prod = () => {
     const [product, setproduct] = useState([]);
     const [totalrows,settotalrows]=useState(0);
+    
+
     useEffect(  () => {
       if(product.length==0){
       (async ()=>{
@@ -36,6 +38,7 @@ import {
       })() 
     }
     },[]);
+   
     return product.length==totalrows  ?  (
         <>
         {/* Cards above Table */}

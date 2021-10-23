@@ -33,4 +33,4 @@ const app = firebase.initializeApp({
 // })
 export const db=firebase.firestore();
 export const auth = app.auth();
-export const storageRef=app.storage().ref();
+export const storageRef=app.storage();
