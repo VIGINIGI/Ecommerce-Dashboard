@@ -1,5 +1,6 @@
 import { data } from "jquery";
 import React, { useState,useEffect } from "react";
+import ReactToExcel from "react-html-table-to-excel";
 import {
     Badge,
     Button,
@@ -149,9 +150,9 @@ return tabledata.length!=0  ? (
                   console.log(key, val);
                 } */}
                 <th>Accessories</th>
-                <td>{tabledata[currentindex].tabledata.Accessories.map((key,value)=>{
+                {/* <td>{tabledata[currentindex].tabledata.Accessories.map((key,value)=>{
                   return(<>{value+","}</>)
-                })}</td>
+                })}</td> */}
               </tr>
             </tbody>
             </>
@@ -301,14 +302,13 @@ return tabledata.length!=0  ? (
                 </InputGroup>
               </FormGroup>
                   <div className="col text-right">
-                  <Button
-                      color="primary"
-                      href="#pablo"
-                      onClick={(e) => e.preventDefault()}
-                      size="sm"
-                    >
-                      Export To Excel
-                    </Button>
+                  <ReactToExcel
+                     className="btn"
+                     table="excel"
+                     filename="excel file"
+                     sheet="sheet 1" 
+                     buttonText="Export to excel"
+                    />
                     <Button
                       color="primary"
                       href="#pablo"

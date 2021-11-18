@@ -16,9 +16,73 @@ import {db} from "../../Firebase";
   const Delivery = () => {
     const [deliveryboydata, setdeliveryboydata] = useState([]);
     const [totalrows,settotalrows]=useState(0);
-
+    const [delivery,setDelivery]=useState([])
+    const [active,setActive]=useState([])
+    const [blocked,setBlocked]=useState([])
+    const fetchBlogs=async()=>{
+      const response=db.collection('DeliveryBoy');
+      const data=await response.get();
+      const data1=await response.where('status', '==', "Active").get();
+      const data2=await response.where('status', '==', "Blocked").get();
+      const d=data.docs;
+      const c=data1.docs;
+      const b=data2.docs;
+      
+      // console.log(d.length)
+      data.docs.forEach(item=>{
+        let x=item.data();
+        console.log(item.id);
+        setDelivery([...delivery,{"ID":d.length}])
+        setActive([...active,{"ID":c.length}])
+        setBlocked([...blocked,{"ID":b.length}])
+       })
+     
+    }
+    function total() {
+      return (
+       <div className="App">
+         {delivery&&delivery.map(x=>{
+            return(
+                 <div>
+                 <h4>{x["ID"]}</h4>
+                </div>
+             )
+           })
+           }
+       </div>
+     );
+   }
+   function Active() {
+    return (
+     <div className="App">
+       {active&&active.map(x=>{
+          return(
+               <div>
+               <h4>{x["ID"]}</h4>
+              </div>
+           )
+         })
+         }
+     </div>
+   );
+ }
+ function Blocked() {
+  return (
+   <div className="App">
+     {blocked&&blocked.map(x=>{
+        return(
+             <div>
+             <h4>{x["ID"]}</h4>
+            </div>
+         )
+       })
+       }
+   </div>
+ );
+}
 
     useEffect(  () => {
+      fetchBlogs();
       if(deliveryboydata.length==0){
       (async ()=>{
       const response= db.collection('users');
@@ -54,8 +118,7 @@ import {db} from "../../Firebase";
           <div className="header-body">
             {/* Card stats */}
             <Row>
-              <CardDetail detail={{name:"Request Today ",number:123,percent:"12%",last:"Since Last 2 months"}}/>
-              <CardDetail detail={{name:"Processing Request Today ",number:12,percent:"11%",last:"Since Last 2 months"}}/>
+              
               <Col lg="6" xl="3">
                 <Card className="card-stats mb-4 mb-xl-0">
                   <CardBody>
@@ -65,10 +128,10 @@ import {db} from "../../Firebase";
                           tag="h5"
                           className="text-uppercase text-muted mb-0"
                         >
-                          No Of Request Today 
+                          Total No of Delivery Boys
                         </CardTitle>
                         <span className="h2 font-weight-bold mb-0">
-                          350,897
+                          {total()}
                         </span>
                       </div>
                       <Col className="col-auto">
@@ -77,12 +140,7 @@ import {db} from "../../Firebase";
                         </div>
                       </Col>
                     </Row>
-                    <p className="mt-3 mb-0 text-muted text-sm">
-                      <span className="text-success mr-2">
-                        <i className="fa fa-arrow-up" /> 3.48%
-                      </span>{" "}
-                      <span className="text-nowrap">Since last month</span>
-                    </p>
+                   
                   </CardBody>
                 </Card>
               </Col>
@@ -96,9 +154,9 @@ import {db} from "../../Firebase";
                           tag="h5"
                           className="text-uppercase text-muted mb-0"
                         >
-                          No Of Preprocessing Request Today
+                          Total Blocked
                         </CardTitle>
-                        <span className="h2 font-weight-bold mb-0">2,356</span>
+                        <span className="h2 font-weight-bold mb-0">{Blocked()}</span>
                       </div>
                       <Col className="col-auto">
                         <div className="icon icon-shape bg-warning text-white rounded-circle shadow">
@@ -106,12 +164,7 @@ import {db} from "../../Firebase";
                         </div>
                       </Col>
                     </Row>
-                    <p className="mt-3 mb-0 text-muted text-sm">
-                      <span className="text-danger mr-2">
-                        <i className="fas fa-arrow-down" /> 3.48%
-                      </span>{" "}
-                      <span className="text-nowrap">Since last week</span>
-                    </p>
+                    
                   </CardBody>
                 </Card>
               </Col>
@@ -124,9 +177,9 @@ import {db} from "../../Firebase";
                           tag="h5"
                           className="text-uppercase text-muted mb-0"
                         >
-                          Sales
+                          Total Active
                         </CardTitle>
-                        <span className="h2 font-weight-bold mb-0">924</span>
+                        <span className="h2 font-weight-bold mb-0">{Active()} </span>
                       </div>
                       <Col className="col-auto">
                         <div className="icon icon-shape bg-yellow text-white rounded-circle shadow">
@@ -134,40 +187,7 @@ import {db} from "../../Firebase";
                         </div>
                       </Col>
                     </Row>
-                    <p className="mt-3 mb-0 text-muted text-sm">
-                      <span className="text-warning mr-2">
-                        <i className="fas fa-arrow-down" /> 1.10%
-                      </span>{" "}
-                      <span className="text-nowrap">Since yesterday</span>
-                    </p>
-                  </CardBody>
-                </Card>
-              </Col>
-              <Col lg="6" xl="3">
-                <Card className="card-stats mb-4 mb-xl-0">
-                  <CardBody>
-                    <Row>
-                      <div className="col">
-                        <CardTitle
-                          tag="h5"
-                          className="text-uppercase text-muted mb-0"
-                        >
-                          Performance
-                        </CardTitle>
-                        <span className="h2 font-weight-bold mb-0">49,65%</span>
-                      </div>
-                      <Col className="col-auto">
-                        <div className="icon icon-shape bg-info text-white rounded-circle shadow">
-                          <i className="fas fa-percent" />
-                        </div>
-                      </Col>
-                    </Row>
-                    <p className="mt-3 mb-0 text-muted text-sm">
-                      <span className="text-success mr-2">
-                        <i className="fas fa-arrow-up" /> 12%
-                      </span>{" "}
-                      <span className="text-nowrap">Since last month</span>
-                    </p>
+                    
                   </CardBody>
                 </Card>
               </Col>

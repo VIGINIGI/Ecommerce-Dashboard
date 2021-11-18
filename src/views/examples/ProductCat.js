@@ -14,12 +14,43 @@ import ProductCategories from "views/ProductCategories/ProductCategoriesTable";
 
 import {db} from "../../Firebase";
   const ProductCat = () => {
-     
-
-      
     const [ProductCatdata, setProductCatdata] = useState([]);
     const [totalrows,settotalrows]=useState(0);
+    const [cat,setcat]=useState([])
+
+    const fetchBlogs=async()=>{
+      const response=db.collection('ProductCat');
+      const data=await response.get();
+      const d=data.docs;
+      // console.log(d.length)
+      data.docs.forEach(item=>{
+        let x=item.data();
+        console.log(item.id);
+        setcat([...cat,{"ID":d.length}])
+        
+       
+
+       
+      })
+     
+    }
+
+    function total() {
+      return (
+       <div className="App">
+         {cat&&cat.map(cats=>{
+            return(
+                 <div>
+                 <h4>{cats["ID"]}</h4>
+                </div>
+             )
+           })
+           }
+       </div>
+     );
+   }
     useEffect(  () => {
+      fetchBlogs();
       if(ProductCatdata.length==0){
       (async ()=>{
       const response= db.collection('ProductCat');
@@ -55,7 +86,30 @@ import {db} from "../../Firebase";
           <div className="header-body">
             {/* Card stats */}
             <Row>
-              <CardDetail detail={{name:"Total No Of Categories ",number:123,percent:"12%",last:"Since Last 2 months"}}/>
+            <Col lg="6" xl="3">
+                <Card className="card-stats mb-4 mb-xl-0 ">
+                  <CardBody>
+                    <Row>
+                      <div className="col">
+                        <CardTitle
+                          tag="h5"
+                          className="text-uppercase text-muted mb-0"
+                        >
+                           Total No Of Categories
+                          {total()}
+                        </CardTitle>
+                        
+                        
+                      </div>
+                      <Col className="col-auto">
+                        <div className="icon icon-shape bg-danger text-white rounded-circle shadow">
+                          <i className="fas fa-chart-bar" />
+                        </div>
+                      </Col>
+                    </Row>
+                  </CardBody>
+                </Card>
+              </Col>
               
               </Row>
           </div>

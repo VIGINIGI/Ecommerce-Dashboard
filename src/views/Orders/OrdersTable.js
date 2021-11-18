@@ -1,10 +1,5 @@
 import React, {useState,useEffect} from "react";
 import { NotificationManager } from "react-notifications";
-import { AgGridReact} from 'ag-grid-react';
-
-import 'ag-grid-community/dist/styles/ag-grid.css';
-import 'ag-grid-community/dist/styles/ag-theme-alpine.css';
-import ReactToExcel from "react-html-table-to-excel";
 import {
     Badge,
     Button,
@@ -33,7 +28,7 @@ import {
   // import CustomModal from "views/Cards/modal";
   import {  Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
   import {db} from "../../Firebase";
-
+  import ReactToExcel from "react-html-table-to-excel";
 const Orders = (props) => { 
   const [modaldetail, setModal] = useState(false);
   const [modaldelievery, setModaldelievery] = useState(false);
@@ -44,8 +39,11 @@ const Orders = (props) => {
   const [deliveryboydata,setdeliveryboydata]=useState([]);
   const [totalrows,settotalrows]=useState(0);
   const [currentindex,setcurrentindex]=useState(0);
-  
-  var stringSimilarity = require("string-similarity");
+  // for sorting
+  const sorttype=["None","Start","End"];
+  var sortnum=0;
+  //for search 
+ var stringSimilarity = require("string-similarity");
  const [search, setsearch]=useState("");
  const [searchresult, setsearchresult]=useState([]);
  const [displaydata,setdisplaydata]=useState([]);
@@ -280,15 +278,7 @@ const Orders = (props) => {
                 </InputGroup>
               </FormGroup>
                   <div className="col text-right">
-                  {/*<Button 
-                      color="primary"
-                      href="#pablo"
-                      onClick={(e) => e.preventDefault()}
-                      size="sm"
-                    >
-                      Export to Excel
-                    </Button>*/}
-
+                  
                   <ReactToExcel
                      className="btn"
                      table="excel"
@@ -296,6 +286,7 @@ const Orders = (props) => {
                      sheet="sheet 1"
                      buttonText="Export to excel"
                     />
+                    
                     <Button
                       color="primary"
                       href="#pablo"
@@ -331,7 +322,7 @@ const Orders = (props) => {
                     <th scope="col">Quantity</th>
                     <th scope="col">PhoneNumber</th>
                     <th scope="col">PaymentMode</th>
-                    <th scope="col" >Date</th>
+                    <th scope="col">Date</th>
                     <th scope="col">View Bill</th>
                     <th scope="col">Status</th>
                     <th scope="col">AssignDelieveryBoy</th>
@@ -355,7 +346,41 @@ const Orders = (props) => {
                       {data.phonenumber}
                     </td>
                     <td>
-                      {data.paymentmode}
+                    <UncontrolledDropdown>
+                        <DropdownToggle
+                          
+                          href="#pablo"
+                          role="button"
+                          size="sm"
+                          color=""
+                          onClick={(e) => e.preventDefault()}
+                        >
+                          {data.paymentmode}
+                          {/* <i className="fas fa-ellipsis-v" /> */}
+                        </DropdownToggle>
+                        <DropdownMenu className="dropdown-menu-arrow" right>
+                          <DropdownItem
+                            href="#pablo"
+                            onClick={()=>{
+                              let temp = [...tabledata];     // create the copy of state array
+                              temp[index].tabledata.paymentmode = 'Online';                  //new value
+                              settabledata(temp);
+                            }}
+                          >
+                            Online
+                          </DropdownItem>
+                          <DropdownItem
+                            href="#pablo"
+                            onClick={()=>{
+                              let temp = [...tabledata];     // create the copy of state array
+                              temp[index].tabledata.paymentmode = 'COD';                  //new value
+                              settabledata(temp);
+                            }}
+                          >
+                            COD
+                          </DropdownItem>
+                        </DropdownMenu>
+                      </UncontrolledDropdown>
                     </td>
                 
                     <td>

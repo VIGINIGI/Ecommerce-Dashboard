@@ -1,6 +1,7 @@
 import { data } from "jquery";
 import React, { useState,useEffect } from "react";
 import { NotificationManager } from "react-notifications";
+import ReactToExcel from "react-html-table-to-excel";
 import {
     Badge,
     Button,
@@ -299,14 +300,13 @@ async function getdeliveryboy(index){
                 </InputGroup>
               </FormGroup>
                   <div className="col text-right">
-                  <Button
-                      color="primary"
-                      href="#pablo"
-                      onClick={(e) => e.preventDefault()}
-                      size="sm"
-                    >
-                      Export To Excel
-                    </Button>
+                  <ReactToExcel
+                     className="btn"
+                     table="excel"
+                     filename="excel file"
+                     sheet="sheet 1"
+                     buttonText="Export to excel"
+                    />
                     <Button
                       color="primary"
                       href="#pablo"

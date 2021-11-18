@@ -1,6 +1,6 @@
 import React, { useState,useEffect } from "react";
 
-
+import ReactToExcel from "react-html-table-to-excel";
 
 import{ DropdownButton,
 Dropdown,ButtonGroup,} from 'react-bootstrap';
@@ -231,14 +231,15 @@ const ProductCategories = (props) => {
                     >
                       Add Category
                     </Button>
-                  <Button
-                      color="primary"
-                      href="#pablo"
-                      onClick={(e) => e.preventDefault()}
-                      size="sm"
-                    >
-                      Export To Excel
-                    </Button>
+                    
+                    <ReactToExcel
+                     className="btn"
+                     table="excel"
+                     filename="excel file"
+                     sheet="sheet 1"
+                     buttonText="Export to excel"
+                    />
+
                     <Button
                       color="primary"
                       href="#pablo"
