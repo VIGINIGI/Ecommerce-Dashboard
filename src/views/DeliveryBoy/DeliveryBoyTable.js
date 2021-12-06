@@ -33,21 +33,27 @@ import {Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
 import {db} from "../../Firebase";
 import {storageRef} from "../../Firebase";
 import { NotificationManager} from 'react-notifications';
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 const DeliveryBoy = (props) => { 
   const [modaldetail, setModal] = useState(false);
   const toggle = () =>  setModal(!modaldetail); 
 
   const [kycmodal, setkycmodal]=useState(false);
   const togglekyc=()=>setkycmodal(!kycmodal);
-  
+  const [startDate, setStartDate] = useState(new Date());
  const [popoverOpen, setPopoverOpen] = useState(false);
  const [popoveredit, setPopoveredit] = useState(false);
  const togglepopoveredit = () => setPopoveredit(!popoveredit);
  const togglepopover = () => setPopoverOpen(!popoverOpen);
 
+ const [popovertransaction, setPopovertransaction] = useState(false);
+ const togglepopovertransaction = () => setPopovertransaction(!popovertransaction);
+
  const [tabledata, settabledata]= useState([]);
  const [delcost,setdelcost]=useState();
- const [newdeliveryboy,setnewdeliveryboy]=useState({"phone":"","password":""});
+ const [newdeliveryboy,setnewdeliveryboy]=useState({"Phone Number":"","Password":""});
+ const [newtransaction,setnewtransaction]=useState({"amount":"","date":startDate});
  const [kycdetail,setkycdetail]=useState({"front":"","back":""});
   const [currentindex,setcurrentindex]=useState(0);
  useEffect( () => {
@@ -56,7 +62,7 @@ const DeliveryBoy = (props) => {
     setdelcost(value.data());
     console.log("delost:",value.data());
   })
-  
+              
    if( tabledata.length==0){
    props.data.forEach(item=>{
     //  setrepairdata([...repairdata,item.data()]);
@@ -68,7 +74,7 @@ const DeliveryBoy = (props) => {
  },[]);
  async function handleSubmit(e) {
   e.preventDefault()
-  if(newdeliveryboy.phone.length!=13 || newdeliveryboy.password.length<4){
+  if(newdeliveryboy["Phone Number"].length!=13 || newdeliveryboy.Password.length<4){
     NotificationManager.error("Error! \n Enter Correct Phone Number(add +91) or Stronger Password ");
     return;
   }
@@ -76,12 +82,12 @@ const DeliveryBoy = (props) => {
   newdeliveryboy.orderdelivered=0;
   newdeliveryboy.status="Active";
   newdeliveryboy.kycstatus="false";
-  newdeliveryboy.name="NULL";
+  newdeliveryboy["Full Name"]="NULL";
   newdeliveryboy.type="DeliveryBoy";
   newdeliveryboy.TotalEarning=0;
   var today = new Date(),
   date = today.getDate() + '/' + (today.getMonth() + 1) + '/' + today.getFullYear();
-  newdeliveryboy.RegisteredOn=date;
+  newdeliveryboy["Registered On"]=date;
   await db.collection("IDs").doc("DeliveryBoy").get().then((value)=>{
         
     let id=value.data().nextid
@@ -107,19 +113,19 @@ const DeliveryBoy = (props) => {
     //     setnewdeliveryboy({"phone":"","password":""});
 
     // });
-    await db.collection("users").doc(newdeliveryboy.phone).set(
+    await db.collection("users").doc(newdeliveryboy["Phone Number"]).set(
       newdeliveryboy
       )
       .then(() => {
         NotificationManager.success ('Delievery Boy Created');
           console.log("Document successfully written!");
-          db.collection("users").doc(newdeliveryboy.phone).collection.set()
-          setnewdeliveryboy({"phone":"","password":""});
+          db.collection("users").doc(newdeliveryboy["Phone Number"]).collection.set()
+          setnewdeliveryboy({"Phone Number":"","Password":""});
       })
       .catch((error) => {
         NotificationManager.error(error);
           console.error("Error writing document: ", error);
-          setnewdeliveryboy({"phone":"","password":""});
+          setnewdeliveryboy({"Phone Number":"","Password":""});
   
       });
 
@@ -154,6 +160,47 @@ function showdetail(index){
   setModal(!modaldetail);  
 
 }
+function addtransaction(index){
+  db.collection("IDs").doc("Transaction").get().then((value)=>{
+    let id=value.data().nextid
+    newtransaction.id=id;
+    newtransaction.senderId="Admin";
+    newtransaction.receiverId=tabledata[index].ID;
+    var today = new Date();
+    newtransaction.timestamp= today.getFullYear()+'-'+(today.getMonth() + 1)+'-'+today.getDate()+" "+today.toTimeString() ;
+    id=id+1;
+    db.collection("IDs").doc("Transaction").update({
+      "nextid":id
+    })
+    db.collection("users").doc(tabledata[index].ID).collection("MyTransaction").doc(newtransaction.id+"_T").set(
+      newtransaction
+    ).then(() => {
+      let temp = [...tabledata]; 
+      temp[index].tabledata.TotalEarning=temp[index].tabledata.TotalEarning-newtransaction.amount;
+      db.collection("users").doc(tabledata[index].ID).update(
+        {
+          "TotalEarning":temp[index].tabledata.TotalEarning,
+        }
+      )
+      .then(() => {
+        NotificationManager.success("Transaction added successfully!");
+        setnewtransaction({"amount":"","date":""});
+        console.log("DeliveryBoy successfully updated!");
+      }).catch((error) => {
+            console.error("Error writing document: ", error);
+        });
+  })
+
+
+
+      console.log("Document Transaction updated !");
+      
+    }).catch((error) => {
+          setnewtransaction({"amount":"","date":""});
+          console.error("Error writing document: ", error);
+      });
+  togglepopovertransaction();
+}
 async function del(index){
   db.collection("users").doc(tabledata[index].ID).delete().then(() => {
     NotificationManager.success("Deleted")
@@ -165,8 +212,8 @@ async function edit(index){
   
  await db.collection("users").doc(tabledata[index].ID).update(
     {
-      "phone":newdeliveryboy.phone,
-      "password":newdeliveryboy.password,
+      "phone":newdeliveryboy["Phone Number"],
+      "password":newdeliveryboy.Password,
     }
   )
   .then(() => {
@@ -205,24 +252,24 @@ return tabledata.length!=0 && delcost!=undefined ? (
         <ModalBody>
          <>
          <div className="d-flex justify-content-center">General INFO</div>
-          Name:{tabledata[currentindex].tabledata.name}
-          <br></br>
-          PhoneNo:{tabledata[currentindex].tabledata.phone}
-          <br></br>
-          City:Mumbai
-          <br></br>
-          Pincode:400091
-          <br></br>
-          <br></br>
-          <div className="d-flex justify-content-center">KYC: {tabledata[currentindex].tabledata.status} </div>
-          Name(As per Aadhar):
-          <br></br>
-          Aadhar Number:9082654321
-          <br></br>
-          Front-Image:<img src=""></img>
-          <br></br>
-          Back-Image:<img src=""></img>
-          <br></br>
+         <Table className="align-items-center table-flush" responsive>
+           <thead className="thead-light">
+             <tr>
+               <th>Feild </th>
+               <th>Value</th>
+             </tr> 
+           </thead>
+           <tbody>
+         {Object.keys(tabledata[currentindex].tabledata).map((key, index) => {
+           return(
+           <tr>
+               <td>{key}</td>
+               <td>{tabledata[currentindex].tabledata[key]}</td>
+            </tr>) 
+         })}
+         </tbody>
+         </Table>
+          
            </>
         </ModalBody>
         <ModalFooter>
@@ -237,9 +284,9 @@ return tabledata.length!=0 && delcost!=undefined ? (
         <ModalBody>
          <>
          <div className="d-flex justify-content-center">General INFO</div>
-          Name:{tabledata[currentindex].tabledata.name}
+          Name:{tabledata[currentindex].tabledata["Full Name"]}
           <br></br>
-          PhoneNo:{tabledata[currentindex].tabledata.phone}
+          PhoneNo:{tabledata[currentindex].tabledata["Phone Number"]}
           <br></br>
           City:Mumbai
           <br></br>
@@ -286,7 +333,7 @@ return tabledata.length!=0 && delcost!=undefined ? (
                   <Input
                     placeholder="Phone"
                     type="tel"
-                    onChange={(e)=>{newdeliveryboy.phone=e.target.value}}
+                    onChange={(e)=>{newdeliveryboy["Phone Number"]=e.target.value}}
                   />
                 </InputGroup>
               </FormGroup>
@@ -301,7 +348,7 @@ return tabledata.length!=0 && delcost!=undefined ? (
                     placeholder="Password"
                     type="text"
                     
-                    onChange={(e)=>{newdeliveryboy.password=e.target.value}}
+                    onChange={(e)=>{newdeliveryboy.Password=e.target.value}}
 
                   />
                 </InputGroup>
@@ -314,6 +361,58 @@ return tabledata.length!=0 && delcost!=undefined ? (
         </PopoverBody>
       </Popover>
     </div>
+    {/* *********************************Transaction**********************/}
+    <>
+    <Popover placement="bottom" isOpen={popovertransaction} target="Popover3" toggle={togglepopovertransaction}>
+        <PopoverHeader>ADD Transaction</PopoverHeader>
+        <PopoverBody>
+          
+        <Form role="form">
+        <FormGroup className="mb-3">
+                <InputGroup className="input-group-alternative">
+                  <InputGroupAddon addonType="prepend">
+                    <InputGroupText>
+                      <i className="ni ni-mobile-button" />
+                    </InputGroupText>
+                  </InputGroupAddon>
+                  <Input
+                    type="tel"
+                    value={tabledata[currentindex].tabledata["Full Name"]}
+                  />
+                </InputGroup>
+              </FormGroup>
+              <FormGroup className="mb-3">
+                <InputGroup className="input-group-alternative">
+                  <InputGroupAddon addonType="prepend">
+                    <InputGroupText>
+                      <i className="ni ni-mobile-button" />
+                    </InputGroupText>
+                  </InputGroupAddon>
+                  <Input
+                    placeholder="Amount"
+                    type="tel"
+                    onChange={(e)=>{newtransaction.amount=e.target.value}}
+                  />
+                </InputGroup>
+              </FormGroup>
+              <FormGroup>
+                <InputGroup className="input-group-alternative">
+                  <InputGroupAddon addonType="prepend">
+                    <InputGroupText>
+                      <i className="ni ni-lock-circle-open" />
+                    </InputGroupText>
+                  </InputGroupAddon>
+                  <DatePicker dateFormat="yy-mm-dd" selected={startDate} onChange={(date) => {setStartDate(date);newtransaction.date=date;}} />
+                </InputGroup>
+              </FormGroup>
+              
+              
+        <Button color="primary" size="sm" onClick={()=>{togglepopovertransaction();}}>Cancel</Button>
+        <Button color="primary" size="sm"  onClick={()=>{addtransaction(currentindex)}}>Add</Button>
+        </Form>
+        </PopoverBody>
+      </Popover>
+    </>
 
         <Container className="mt--7" fluid>
         <div className="col">
@@ -408,6 +507,7 @@ return tabledata.length!=0 && delcost!=undefined ? (
                     <th scope="col">KYC Status</th>
                     <th scope="col">Status</th>
                     <th scope="col">Action</th>
+                    <th scope="col">Add Transaction</th>
                     <th scope="col">View Details</th>
                     
                     
@@ -422,10 +522,10 @@ return tabledata.length!=0 && delcost!=undefined ? (
                       {data.id}
                           
                     </td>
-                    <td>{data.name}</td>
+                    <td>{data["Full Name"]}</td>
                     
                     <td>
-                      {data.phone}
+                      {data["Phone Number"]}
                     </td>
                     <td>
                       {data.orderdelivered}
@@ -501,10 +601,10 @@ return tabledata.length!=0 && delcost!=undefined ? (
                                   </InputGroupText>
                                 </InputGroupAddon>
                                 <Input
-                                  placeholder={data.phone}
+                                  placeholder={data["Phone Number"]}
                                   type="tel"
                                   pattern= "[0-9]{10}"
-                                  onChange={(e)=>{newdeliveryboy.phone=e.target.value}}
+                                  onChange={(e)=>{newdeliveryboy["Phone Number"]=e.target.value}}
                                 />
                               </InputGroup>
                             </FormGroup>
@@ -519,7 +619,7 @@ return tabledata.length!=0 && delcost!=undefined ? (
                                   placeholder="Password"
                                   type="text"
                                   
-                                  onChange={(e)=>{newdeliveryboy.password=e.target.value}}
+                                  onChange={(e)=>{newdeliveryboy.Password=e.target.value}}
 
                                 />
                               </InputGroup>
@@ -533,7 +633,6 @@ return tabledata.length!=0 && delcost!=undefined ? (
                     </Popover>
                       </>
                     <ul className="list-inline m-0">
-                    
                     <li className="list-inline-item">
                       <button className="btn btn-success btn-sm rounded-0" type="button" id="Popover2"  data-toggle="tooltip" data-placement="top" title="Edit"><i className="fa fa-edit" /></button>
                     </li>
@@ -541,6 +640,14 @@ return tabledata.length!=0 && delcost!=undefined ? (
                       <button className="btn btn-danger btn-sm rounded-0" type="button" data-toggle="tooltip" data-placement="top" title="Delete" onClick={()=>del(index)}><i className="fa fa-trash" /></button>
                     </li>
                     </ul>
+                    </td>
+                    <td>
+                    <Button
+                      color="primary"
+                      id="Popover3"
+                      onClick={()=>{setcurrentindex(index);togglepopovertransaction();}}
+                      size="sm"
+                    >Transaction</Button>
                     </td>
                     <td>
                     <Button

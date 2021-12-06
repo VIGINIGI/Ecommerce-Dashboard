@@ -137,6 +137,7 @@ return tabledata.length!=0  ? (
         <ModalBody>
         {
           <>
+            <h2>Accessories</h2>
             <thead className="thead-light">
             <tr>
               <th>Field name</th>
@@ -149,9 +150,12 @@ return tabledata.length!=0  ? (
                   console.log(key, val);
                 } */}
                 <th>Accessories</th>
-                <td>{tabledata[currentindex].tabledata.Accessories.map((key,value)=>{
+                <td>
+                  {/* ************************************************************************************* */}
+                  {/* {tabledata[currentindex].tabledata.Accessories.map((key,value)=>{
                   return(<>{value+","}</>)
-                })}</td>
+                })} */}
+                </td>
               </tr>
             </tbody>
             </>
@@ -186,8 +190,8 @@ return tabledata.length!=0  ? (
           return( 
         <tr>
           <th scope="row">{data.tabledata.id}</th>
-          <td>{data.tabledata.name}</td>
-          <td>{data.tabledata.phone}</td>
+          <td>{data.tabledata["Full Name"]}</td>
+          <td>{data.tabledata["Phone Number"]}</td>
           <td>{data.tabledata.orderdelivered}</td>
           <td><Button
                       color="primary"
@@ -197,8 +201,8 @@ return tabledata.length!=0  ? (
                         let tempdeliveryboy=[...deliveryboydata]
 
                         temp[currentindex].tabledata.deliveryBoyId = data.ID;
-                        temp[currentindex].tabledata.deliveryBoyName = data.tabledata.name;    
-                        temp[currentindex].tabledata.deliveryBoyPhoneNumber = data.tabledata.phone;
+                        temp[currentindex].tabledata.deliveryBoyName = data.tabledata["Full Name"];    
+                        temp[currentindex].tabledata.deliveryBoyPhoneNumber = data.tabledata["Phone Number"];
 
                         tempdeliveryboy[index].tabledata.orderdelivered=tempdeliveryboy[index].tabledata.orderdelivered+1;
                         //add delivery cost

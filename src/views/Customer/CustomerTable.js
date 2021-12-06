@@ -189,12 +189,27 @@ const Customer = (props) => {
         <div>
       {/* *********************************Detail Modal************************************ */}
       <Modal isOpen={modaldetail} toggle={toggle} >
-        <ModalHeader toggle={toggle}>Modal title</ModalHeader>
+        <ModalHeader toggle={toggle}>General Info</ModalHeader>
         <ModalBody>
         <>
-          {tabledata[currentindex].tabledata.username}
-          <br></br>
-          {tabledata[currentindex].tabledata.phonenumber}
+        <div className="d-flex justify-content-center">General INFO</div>
+         <Table className="align-items-center table-flush" responsive>
+           <thead className="thead-light">
+             <tr>
+               <th>Feild </th>
+               <th>Value</th>
+             </tr> 
+           </thead>
+           <tbody>
+         {Object.keys(tabledata[currentindex].tabledata).map((key, index) => {
+           return(
+           <tr>
+               <td>{key}</td>
+               <td>{tabledata[currentindex].tabledata[key]}</td>
+            </tr>) 
+         })}
+         </tbody>
+         </Table>
         </>
         </ModalBody>
         <ModalFooter>
@@ -204,7 +219,7 @@ const Customer = (props) => {
       </Modal>
     </div>
    <div>
-     {/* *************************To Add Delivery Boy***************************** */}
+     {/* *************************To Add customer ***************************** */}
     <Popover placement="bottom" isOpen={popoverOpen} target="Popover1" toggle={togglepopover}>
         <PopoverHeader>ADD Customer</PopoverHeader>
         <PopoverBody>
@@ -327,6 +342,7 @@ const Customer = (props) => {
                     <th scope="col">User PhoneNo</th>
                     <th scope="col">Date Of Registered</th>
                     <th scope="col">Status </th>
+                    <th scope="col">ShowDetails </th>
                     <th scope="col">Action</th>
                   </tr>
                 </thead>
@@ -387,6 +403,14 @@ const Customer = (props) => {
   </div>
                     </td>
                     <td>
+                      <Button
+                      color="primary"
+                      
+                      onClick={()=>{toggle()}}
+                      size="sm"
+                    >Show Details</Button>
+                        </td>
+                    <td>
                       {/* **************************************Customer Edit********************* */}
                       <>
                       <Popover placement="bottom" isOpen={popoveredit} target="Popover2" toggle={togglepopoveredit}>
@@ -433,10 +457,9 @@ const Customer = (props) => {
                       </PopoverBody>
                     </Popover>
                       </>
+                      
                     <ul className="list-inline m-0">
-        <li className="list-inline-item">
-          <button className="btn btn-primary btn-sm rounded-0" type="button" data-toggle="tooltip" data-placement="top" title="Info" onClick={()=>{toggle()}}><i className="fa fa-info" /></button>
-        </li>
+        
         <li className="list-inline-item">
           <button className="btn btn-success btn-sm rounded-0" type="button" data-toggle="tooltip" data-placement="top" title="Edit" id="Popover2" ><i className="fa fa-edit" /></button>
         </li>

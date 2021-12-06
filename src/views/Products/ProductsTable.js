@@ -224,14 +224,30 @@ const Products= (props) => {
     
     return tabledata.length!=0  ? (
         <>
+        {/* ****************************Show detail Modal************************88 */}
         <div>
       <Modal isOpen={modaldetail} toggle={toggle} >
         <ModalHeader toggle={toggle}>Detail</ModalHeader>
         <ModalBody>
         <>
-          {tabledata[currentindex].tabledata.name}
-          <br></br>
-          {tabledata[currentindex].tabledata.category}
+        <div className="d-flex justify-content-center">General INFO</div>
+         <Table className="align-items-center table-flush" responsive>
+           <thead className="thead-light">
+             <tr>
+               <th>Feild </th>
+               <th>Value</th>
+             </tr> 
+           </thead>
+           <tbody>
+         {Object.keys(tabledata[currentindex].tabledata).map((key, index) => {
+           return(
+           <tr>
+               <td>{key}</td>
+               <td>{tabledata[currentindex].tabledata[key]}</td>
+            </tr>) 
+         })}
+         </tbody>
+         </Table>
           </>
         </ModalBody>
         <ModalFooter>
@@ -514,6 +530,7 @@ const Products= (props) => {
                     <th scope="col">Product Quantity</th>
                     <th scope="col">Product Category</th>
                     <th scope="col">Status</th>
+                    <th scope="col">Show Details</th>
                     <th scope="col">Action</th>
                   </tr>
                 </thead>
@@ -582,10 +599,15 @@ const Products= (props) => {
   </div>
                     </td>
                     <td>
+                    <Button
+                      color="primary"
+                      
+                      onClick={()=>showdetail(index)}
+                      size="sm"
+                    >Show Details</Button>
+                    </td>
+                    <td>
                     <ul className="list-inline m-0">
-        <li className="list-inline-item">
-          <button className="btn btn-primary btn-sm rounded-0" type="button" data-toggle="tooltip" data-placement="top" title="Info" onClick={()=>showdetail(index)}><i className="fa fa-info" /></button>
-        </li>
         <li className="list-inline-item">
           <button className="btn btn-success btn-sm rounded-0" type="button" data-toggle="tooltip" data-placement="top" title="Edit"><i className="fa fa-edit" /></button>
         </li>

@@ -187,8 +187,8 @@ async function getdeliveryboy(index){
           return( 
         <tr>
           <th scope="row">{data.tabledata.id}</th>
-          <td>{data.tabledata.name}</td>
-          <td>{data.tabledata.phone}</td>
+          <td>{data.tabledata["Full Name"]}</td>
+          <td>{data.tabledata["Phone Number"]}</td>
           <td>{data.tabledata.orderdelivered}</td>
           <td><Button
                       color="primary"
@@ -198,8 +198,8 @@ async function getdeliveryboy(index){
                         let tempdeliveryboy=[...deliveryboydata]
 
                         temp[currentindex].tabledata.deliveryBoyId = data.ID;
-                        temp[currentindex].tabledata.deliveryBoyName = data.tabledata.name;    
-                        temp[currentindex].tabledata.deliveryBoyPhoneNumber = data.tabledata.phone;
+                        temp[currentindex].tabledata.deliveryBoyName = data.tabledata["Full Name"];    
+                        temp[currentindex].tabledata.deliveryBoyPhoneNumber = data.tabledata["Phone Number"];
 
                         tempdeliveryboy[index].tabledata.orderdelivered=tempdeliveryboy[index].tabledata.orderdelivered+1;
                         //add delivery cost
