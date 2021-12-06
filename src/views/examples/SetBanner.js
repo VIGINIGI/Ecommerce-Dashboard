@@ -15,7 +15,39 @@ import {
   const SetBanner = () => {
     const [banner, setbanner] = useState([]);
     const [totalrows,settotalrows]=useState(0);
+    const[banners,setBanners]=useState([])
+    const fetchBlogs=async()=>{
+      const response=db.collection('Banners');
+      const data=await response.get();
+      const d=data.docs;
+      console.log(d.length)
+      data.docs.forEach(item=>{
+        let x=item.data();
+        console.log(item.id);
+        setBanners([...banners,{"ID":d.length}])
+       
+       
+
+       
+      })
+     
+    }
+    function total() {
+      return (
+       <div className="App">
+         {banners&&banners.map(x=>{
+            return(
+                 <div>
+                 <h4>{x["ID"]}</h4>
+                </div>
+             )
+           })
+           }
+       </div>
+     );
+   }
     useEffect(  () => {
+      fetchBlogs();
       if(banner.length==0){
       (async ()=>{
       const response= db.collection('Banners');
@@ -45,8 +77,30 @@ import {
           <div className="header-body">
             {/* Card stats */}
             <Row>
-              <CardDetail detail={{name:"Total No Of Banners",number:12,percent:"11%",last:"Since Last 2 months"}}/>
-
+            <Col lg="6" xl="3">
+                <Card className="card-stats mb-4 mb-xl-0 ">
+                  <CardBody>
+                    <Row>
+                      <div className="col">
+                        <CardTitle
+                          tag="h5"
+                          className="text-uppercase text-muted mb-0"
+                        >
+                           Total No Of Banners
+                          {total()}
+                        </CardTitle>
+                        
+                        
+                      </div>
+                      <Col className="col-auto">
+                        <div className="icon icon-shape bg-danger text-white rounded-circle shadow">
+                          <i className="fas fa-chart-bar" />
+                        </div>
+                      </Col>
+                    </Row>
+                  </CardBody>
+                </Card>
+              </Col>
             </Row>
           </div>
         </Container>

@@ -1,9 +1,83 @@
-import React from "react";
+import React ,{ useEffect,useState }from "react";
+import {db} from "../../Firebase";
 
 // reactstrap components
 import { Card, CardBody, CardTitle, Container, Row, Col } from "reactstrap";
 
 const Header = () => {
+ const [vx,setVx]=useState([])
+ const [bx,setBx]=useState([])
+  const fetchBlogs=async()=>{
+      const response=db.collection('Orders');
+      const data=await response.get();
+      const data1=await response.where('status', '==', "Accepted").get();
+      const b=data1.docs;
+      const s=[];
+      data.docs.forEach(item=>{
+       let y=item.data().Date;
+       s.push([y])
+       setBx([...bx,{"ID":b.length}])
+      })
+      var v=0;
+      s.forEach(j=>{
+       let currentDate = new Date();
+       let cDay = currentDate.getDate();
+       let cMonth = currentDate.getMonth() + 1;
+       let cYear = currentDate.getFullYear();
+       if( j[0]===""+cDay + "/" + cMonth + "/" + cYear +"")
+          {
+           v=v+1;
+          }
+        }
+      )
+       setVx([...vx,{"ID":v}]) 
+
+  
+
+
+}
+        
+      
+  
+
+   function New() {
+      
+         return (
+          <div className="App">
+            {vx&&vx.map(orders=>{
+               return(
+                    <div>
+                    <h3>{orders["ID"]}</h3>
+                   </div>
+                )
+              })
+              }
+          </div>
+        );
+       }
+       function Completed() {
+      
+        return (
+         <div className="App">
+           {bx&&bx.map(orders=>{
+              return(
+                   <div>
+                   <h3>{orders["ID"]}</h3>
+                  </div>
+               )
+             })
+             }
+         </div>
+       );
+      }
+
+
+   useEffect(  () => {
+     fetchBlogs();
+    
+
+   },[]);
+  
   return (
     <>
       <div className="header bg-gradient-info pb-4 pt-7 pt-md-7">
@@ -23,7 +97,7 @@ const Header = () => {
                           View Daily Revenue
                         </CardTitle>
                         <span className="h2 font-weight-bold mb-0">
-                          2356
+                         
                         </span>
                       </div>
                       <Col className="col-auto">
@@ -32,12 +106,7 @@ const Header = () => {
                         </div>
                       </Col>
                     </Row>
-                    <p className="mt-0 mb-0 text-muted text-sm">
-                      <span className="text-success mr-2">
-                        <i className="fa fa-arrow-up" /> 3.48%
-                      </span>{" "}
-                      <span className="text-nowrap">Since last month</span>
-                    </p>
+                   
                   </CardBody>
                 </Card>
               </Col>
@@ -52,7 +121,7 @@ const Header = () => {
                         >
                           Total Earning
                         </CardTitle>
-                        <span className="h2 font-weight-bold mb-0">2,356</span>
+                        <span className="h2 font-weight-bold mb-0"></span>
                       </div>
                       <Col className="col-auto">
                         <div className="icon icon-shape bg-warning text-white rounded-circle shadow">
@@ -60,12 +129,7 @@ const Header = () => {
                         </div>
                       </Col>
                     </Row>
-                    <p className="mt-3 mb-0 text-muted text-sm">
-                      <span className="text-danger mr-2">
-                        <i className="fas fa-arrow-down" /> 3.48%
-                      </span>{" "}
-                      <span className="text-nowrap">Since last week</span>
-                    </p>
+                    
                   </CardBody>
                 </Card>
               </Col>
@@ -80,7 +144,7 @@ const Header = () => {
                         >
                           Todays New Order
                         </CardTitle>
-                        <span className="h2 font-weight-bold mb-0">924</span>
+                        <span className="h2 font-weight-bold mb-0">{New()}</span>
                       </div>
                       <Col className="col-auto">
                         <div className="icon icon-shape bg-yellow text-white rounded-circle shadow">
@@ -88,12 +152,7 @@ const Header = () => {
                         </div>
                       </Col>
                     </Row>
-                    <p className="mt-1 mb-0 text-muted text-sm">
-                      <span className="text-warning mr-2">
-                        <i className="fas fa-arrow-down" /> 1.10%
-                      </span>{" "}
-                      <span className="text-nowrap">Since yesterday</span>
-                    </p>
+                   
                   </CardBody>
                 </Card>
               </Col>
@@ -107,7 +166,7 @@ const Header = () => {
                           tag="h5"
                           className="text-uppercase text-muted mb-0"
                         >
-                         Total Completed Order
+                         Total Completed Orders
                           
                         </CardTitle>
                         <Col className="col-auto">
@@ -116,13 +175,8 @@ const Header = () => {
                         </div>
                         </Col>
                         </div>
-                        <span className="h2 font-weight-bold mb-0  ">49,65%</span>
-                        <p className="mt-1 mb-0 text-muted text-sm">
-                      <span className="text-success mr-2">
-                        <i className="fas fa-arrow-up" /> 12%
-                      </span>{" "}
-                      <span className="text-nowrap">Since last month</span>
-                    </p>
+                        <span className="h2 font-weight-bold mb-0  ">{Completed()}</span>
+                        
                         
                       
                       
@@ -138,6 +192,8 @@ const Header = () => {
         </Container>
       </div>
     </>
+     
+
   );
 };
 

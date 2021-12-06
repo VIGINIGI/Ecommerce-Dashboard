@@ -54,8 +54,14 @@ const Products= (props) => {
  newproduct.isOnSale=false;
  newproduct.type="New";
  newproduct.category=[];
-  
+ 
+  const [tdata,settdata] = useState();
+  const[searchTerm,setsearchTerm]=useState("");
+  var categoryoutput="";
 
+ 
+
+	
   useEffect( () => {
     if( tabledata.length==0){
       db.collection("ProductCat").get().then((value)=>{

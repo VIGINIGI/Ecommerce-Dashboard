@@ -2,6 +2,7 @@ import { data } from "jquery";
 import React, { useState,useEffect } from "react";
 import{ DropdownButton,
 Dropdown,ButtonGroup,} from 'react-bootstrap';
+import ReactToExcel from "react-html-table-to-excel";
 import {
    
     Button,
@@ -307,14 +308,22 @@ const Customer = (props) => {
                     >
                       Add A Customer
                     </Button>
-                  <Button
+                 {/*<Button 
                       color="primary"
                       href="#pablo"
                       onClick={(e) => e.preventDefault()}
                       size="sm"
                     >
-                      Export To Excel
-                    </Button>
+                      Export to Excel
+                    </Button>*/}
+
+                     <ReactToExcel
+                     className="btn"
+                     table="excel"
+                     filename="excel file"
+                     sheet="sheet 1"
+                     buttonText="Export to excel"
+                    />
                     <Button
                       color="primary"
                       href="#pablo"

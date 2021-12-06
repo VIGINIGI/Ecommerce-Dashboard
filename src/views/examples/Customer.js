@@ -1,6 +1,5 @@
 import React,{ useEffect,useState } from "react";
 import {
-   
     Card,
     Spinner,
     Container,
@@ -9,14 +8,126 @@ import {
   } from "reactstrap";
   import CardDetail from "views/Cards/CardDetail";
   //import Header from "components/Headers/Header.js";
-  import {  CardBody, CardTitle,  Col } from "reactstrap";
+import {  CardBody, CardTitle,  Col } from "reactstrap";
 import Customer from "views/Customer/CustomerTable";
 import {db} from "../../Firebase";
+import firebase from "../../Firebase";
+import { data } from "jquery";
+
+
   const Custom = () => {
     const [customer, setcustomer] = useState([]);
     const [totalrows,settotalrows]=useState(0);
+    const [user,setUser]=useState([])
+    const[user1,setUser1]=useState([])
+    const[todays,setTodays]=useState([])
+    const[block,setBlock]=useState([])
+    const fetchBlogs=async()=>{
+      const response=db.collection('users');
+      const data=await response.get();
+      const data1=await response.where('isBlocked', '==', true).get();
+     
+      //let date = new Intl.DateTimeFormat('en-US', { year: 'numeric', month: '2-digit', day: '2-digit' }).format(currentTimestamp)
+      const d=data.docs;
+      const b=data1.docs;
+      const s=[];
+      // console.log(d.length)
+      data.docs.forEach(item=>{
+        let x=item.data()
+        const y=[]
+        y.push([x])
+        let g=y[0][0]['Registered On']
+        var currentDate=new Date(g)
+        let cDay = currentDate.getDate();
+        let cMonth = currentDate.getMonth() + 1;
+        let cYear = currentDate.getFullYear();
+        var f=""+cDay + "/" + cMonth + "/" + cYear +""
+        s.push(f)
+        console.log(f)
+        //console.log(g)
+        //let y=item.data().
+        console.log(item.id);
+        setUser1([...user1,{"ID":d.length}])
+        setUser([...user,x])
+        setBlock([...block,{"ID":b.length}])
+        
+       
+
+       
+      })
+      //console.log(s)
+
+      var i=0;
+      s.forEach(j=>{
+         let currentDate = new Date();
+         let cDay = currentDate.getDate();
+         let cMonth = currentDate.getMonth() + 1;
+         let cYear = currentDate.getFullYear();
+         //console.log(j)
+         if( j===""+cDay + "/" + cMonth + "/" + cYear +"")
+            {
+             i=i+1;
+          }
+         }
+         )
+         //console.log(l)
+          setTodays([...todays,{"ID":i}]) 
+     
+    }
+    function total() {
+        return (
+         <div className="App">
+           {user1&&user1.map(users=>{
+              return(
+                   <div>
+                   <h4>{users["ID"]}</h4>
+                  </div>
+               )
+             })
+             }
+         </div>
+       );
+     }
+
+
+    function blocked(){
+      return (
+        <div className="App">
+          {block&&block.map(users=>{
+           
+             return(
+                  <div>
+                  <h4>{users["ID"]}</h4>
+                 </div>
+              )
+            })
+            }
+        </div>
+      );
+
+    }
+
+    function today(){
+      return (
+        <div className="App">
+          {todays&&todays.map(users=>{
+           
+             return(
+                  <div>
+                  <h4>{users["ID"]}</h4>
+                 </div>
+              )
+            })
+            }
+        </div>
+      );
+    }
+   
     useEffect(  () => {
+      fetchBlogs();
       if(customer.length==0){
+
+       
       (async ()=>{
       const response= db.collection('users');
       const data=await response.where('type', '==', "User").get();
@@ -29,14 +140,16 @@ import {db} from "../../Firebase";
         let tabledata=item.data();
         //  setrepairdata([...repairdata,item.data()]);
          setcustomer(state => [...state, {tabledata,"ID":item.id}]);
+        })
         
-        
-       })
       
       })() 
     }
-    },[]);
-    return customer.length==totalrows && customer.length!=0  ?  
+    },[])
+    
+    
+  
+  return customer.length==totalrows && customer.length!=0 ?  
      (
         <>
         {/* Cards above Table */}
@@ -46,8 +159,56 @@ import {db} from "../../Firebase";
           <div className="header-body">
             {/* Card stats */}
             <Row>
-              <CardDetail detail={{name:"No Of Users Registered Today ",number:123,percent:"12%",last:"Since Last 2 months"}}/>
-              <CardDetail detail={{name:"No Of User Blocked ",number:12,percent:"11%",last:"Since Last 2 months"}}/>
+            <Col lg="6" xl="3">
+                <Card className="card-stats mb-4 mb-xl-0 ">
+                  <CardBody>
+                    <Row>
+                      <div className="col">
+                        <CardTitle
+                          tag="h5"
+                          className="text-uppercase text-muted mb-0"
+                        >
+                           No Of Users Registered Today
+                          {today()}
+                        </CardTitle>
+                        
+                        
+                      </div>
+                      <Col className="col-auto">
+                        <div className="icon icon-shape bg-danger text-white rounded-circle shadow">
+                          <i className="fas fa-chart-bar" />
+                        </div>
+                      </Col>
+                    </Row>
+                  </CardBody>
+                </Card>
+              </Col>
+
+              <Col lg="6" xl="3">
+                <Card className="card-stats mb-4 mb-xl-0 ">
+                  <CardBody>
+                    <Row>
+                      <div className="col">
+                        <CardTitle
+                          tag="h5"
+                          className="text-uppercase text-muted mb-0"
+                        >
+                          No of Users Blocked
+                          {blocked()}
+                        </CardTitle>
+                        
+                        
+                      </div>
+                      <Col className="col-auto">
+                        <div className="icon icon-shape bg-danger text-white rounded-circle shadow">
+                          <i className="fas fa-chart-bar" />
+                        </div>
+                      </Col>
+                    </Row>
+                  </CardBody>
+                </Card>
+              </Col>
+
               <Col lg="6" xl="3">
                 <Card className="card-stats mb-4 mb-xl-0 ">
                   <CardBody>
@@ -58,10 +219,10 @@ import {db} from "../../Firebase";
                           className="text-uppercase text-muted mb-0"
                         >
                           Total No Of Users
+                          {total()}
                         </CardTitle>
-                        <span className="h2 font-weight-bold mb-0">
-                          350,897
-                        </span>
+                        
+                        
                       </div>
                       <Col className="col-auto">
                         <div className="icon icon-shape bg-danger text-white rounded-circle shadow">
@@ -69,12 +230,6 @@ import {db} from "../../Firebase";
                         </div>
                       </Col>
                     </Row>
-                    <p className="mt-3 mb-0 text-muted text-sm">
-                      <span className="text-success mr-2">
-                        <i className="fa fa-arrow-up" /> 3.48%
-                      </span>{" "}
-                      <span className="text-nowrap">Since last month</span>
-                    </p>
                   </CardBody>
                 </Card>
               </Col>

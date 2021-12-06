@@ -28,7 +28,7 @@ import {
   // import CustomModal from "views/Cards/modal";
   import {  Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
   import {db} from "../../Firebase";
-
+  import ReactToExcel from "react-html-table-to-excel";
 const Orders = (props) => { 
   const [modaldetail, setModal] = useState(false);
   const [modaldelievery, setModaldelievery] = useState(false);
@@ -278,14 +278,15 @@ const Orders = (props) => {
                 </InputGroup>
               </FormGroup>
                   <div className="col text-right">
-                  <Button
-                      color="primary"
-                      href="#pablo"
-                      onClick={(e) => e.preventDefault()}
-                      size="sm"
-                    >
-                      Export To Excel
-                    </Button>
+                  
+                  <ReactToExcel
+                     className="btn"
+                     table="excel"
+                     filename="excel file"
+                     sheet="sheet 1"
+                     buttonText="Export to excel"
+                    />
+                    
                     <Button
                       color="primary"
                       href="#pablo"
@@ -345,7 +346,41 @@ const Orders = (props) => {
                       {data.phonenumber}
                     </td>
                     <td>
-                      {data.paymentmode}
+                    <UncontrolledDropdown>
+                        <DropdownToggle
+                          
+                          href="#pablo"
+                          role="button"
+                          size="sm"
+                          color=""
+                          onClick={(e) => e.preventDefault()}
+                        >
+                          {data.paymentmode}
+                          {/* <i className="fas fa-ellipsis-v" /> */}
+                        </DropdownToggle>
+                        <DropdownMenu className="dropdown-menu-arrow" right>
+                          <DropdownItem
+                            href="#pablo"
+                            onClick={()=>{
+                              let temp = [...tabledata];     // create the copy of state array
+                              temp[index].tabledata.paymentmode = 'Online';                  //new value
+                              settabledata(temp);
+                            }}
+                          >
+                            Online
+                          </DropdownItem>
+                          <DropdownItem
+                            href="#pablo"
+                            onClick={()=>{
+                              let temp = [...tabledata];     // create the copy of state array
+                              temp[index].tabledata.paymentmode = 'COD';                  //new value
+                              settabledata(temp);
+                            }}
+                          >
+                            COD
+                          </DropdownItem>
+                        </DropdownMenu>
+                      </UncontrolledDropdown>
                     </td>
                 
                     <td>
