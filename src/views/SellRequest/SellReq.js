@@ -120,7 +120,7 @@ function searchdata(param){
 
   tabledata.forEach(item=>{
      
-    if  (stringSimilarity.compareTwoStrings(search, item.tabledata.username)>=0.7||stringSimilarity.compareTwoStrings(search, item.tabledata.mobilename)>=0.7 || stringSimilarity.compareTwoStrings(search, item.tabledata.requestid.toString())>=0.8){
+    if  (stringSimilarity.compareTwoStrings(search, item.tabledata.userName)>=0.7||stringSimilarity.compareTwoStrings(search, item.tabledata.phoneBrandName)>=0.7 || stringSimilarity.compareTwoStrings(search, item.ID.toString())>=0.8){
     //  setsearchresult(state => [...state, item]);
     searchresult.push(item);
      }
@@ -282,7 +282,7 @@ return tabledata.length!=0  ? (
               <CardHeader className="border-0">
               <Row className="align-items-center">
                   <div className="col">
-                    <h3 className="mb-0">Page visits</h3>
+                    <h3 className="mb-0">Requests</h3>
                   </div>
                   {/* ************************Search Bar************************** */}
                 <FormGroup className="mb-3">
@@ -490,58 +490,6 @@ return tabledata.length!=0  ? (
                   
                 </tbody>
               </Table>
-              <CardFooter className="py-4">
-                <nav aria-label="...">
-                  <Pagination
-                    className="pagination justify-content-end mb-0"
-                    listClassName="justify-content-end mb-0"
-                  >
-                    <PaginationItem className="disabled">
-                      <PaginationLink
-                        href="#pablo"
-                        onClick={(e) => e.preventDefault()}
-                        tabIndex="-1"
-                      >
-                        <i className="fas fa-angle-left" />
-                        <span className="sr-only">Previous</span>
-                      </PaginationLink>
-                    </PaginationItem>
-                    <PaginationItem className="active">
-                      <PaginationLink
-                        href="#pablo"
-                        onClick={(e) => e.preventDefault()}
-                      >
-                        1
-                      </PaginationLink>
-                    </PaginationItem>
-                    <PaginationItem>
-                      <PaginationLink
-                        href="#pablo"
-                        onClick={(e) => e.preventDefault()}
-                      >
-                        2 <span className="sr-only">(current)</span>
-                      </PaginationLink>
-                    </PaginationItem>
-                    <PaginationItem>
-                      <PaginationLink
-                        href="#pablo"
-                        onClick={(e) => e.preventDefault()}
-                      >
-                        3
-                      </PaginationLink>
-                    </PaginationItem>
-                    <PaginationItem>
-                      <PaginationLink
-                        href="#pablo"
-                        onClick={(e) => e.preventDefault()}
-                      >
-                        <i className="fas fa-angle-right" />
-                        <span className="sr-only">Next</span>
-                      </PaginationLink>
-                    </PaginationItem>
-                  </Pagination>
-                </nav>
-              </CardFooter>
             </Card>
           </div>
           </Container>
