@@ -4,29 +4,15 @@ import NotificationManager from "react-notifications/lib/NotificationManager";
 import {  Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
 import React, { useState,useEffect } from "react";
 import {
-    Badge,
     Button,
     Card,
     CardHeader,
-    CardFooter,
-    DropdownMenu,
-    DropdownItem,
-    UncontrolledDropdown,
-    DropdownToggle,
-   
-    Pagination,
-    PaginationItem,
-    PaginationLink,
     Spinner,
     Table,
     Container,
     Row,
     FormGroup,
-    Form,
     Input,
-    InputGroupAddon,
-    InputGroupText,
-    InputGroup,
     Label,
    
   } from "reactstrap";
@@ -45,7 +31,7 @@ import {
  
     useEffect( () => {
         
-         if( tabledata.length==0){
+         if( tabledata.length===0){
          props.data.forEach(item=>{
           //  setrepairdata([...repairdata,item.data()]);
            settabledata(state => [...state, item]);
