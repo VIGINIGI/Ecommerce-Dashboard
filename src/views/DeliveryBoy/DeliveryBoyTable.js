@@ -123,7 +123,7 @@ const DeliveryBoy = (props) => {
           setnewdeliveryboy({"Phone Number":"","Password":""});
       })
       .catch((error) => {
-        NotificationManager.error(error);
+        NotificationManager.error("Error");
           console.error("Error writing document: ", error);
           setnewdeliveryboy({"Phone Number":"","Password":""});
   
@@ -530,7 +530,7 @@ return tabledata.length!=0 && delcost!=undefined ? (
                       {data.orderdelivered}
                     </td>
                     <td >
-                    {data.isKYC==="false"?    
+                    {data.kycstatus==="false"?    
                       <Button
                       color="primary"
                       
