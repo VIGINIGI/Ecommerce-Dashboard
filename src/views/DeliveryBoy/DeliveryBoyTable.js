@@ -237,7 +237,11 @@ function kycfunction(index){
       console.log("KYCdtail:",kycdetail);
       togglekyc();
       })
-    })
+    }).catch((error) => {
+      console.error("Error writing document: ", error);
+      NotificationManager.error("adhaar image not found");
+      setkycdetail({"front":"","back":""});
+  });
     
       
   

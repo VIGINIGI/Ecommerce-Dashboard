@@ -99,16 +99,7 @@ const Sidebar = (props) => {
         >
           <span className="navbar-toggler-icon" />
         </button>
-        {/* Brand */}
-        {logo ? (
-          <NavbarBrand className="pt-0" {...navbarBrandProps}>
-            <img
-              alt={logo.imgAlt}
-              className="navbar-brand-img"
-              src={logo.imgSrc}
-            />
-          </NavbarBrand>
-        ) : null}
+        
         {/* User */}
         <Nav className="align-items-center d-md-none">
           <UncontrolledDropdown nav>
