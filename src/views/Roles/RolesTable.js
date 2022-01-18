@@ -202,11 +202,6 @@ return tabledata.length!=0  ? (
         </ModalBody>
       </Modal>
 
-      <Button
-                      color="primary"
-                      size="sm"
-                      onClick={()=>{console.log(tabledata)}}
-                    >State</Button>
         <Container className="mt--7" fluid>
         <div className="col">
           
@@ -232,22 +227,7 @@ return tabledata.length!=0  ? (
                      sheet="sheet 1"
                      buttonText="Export to excel"
                     />
-                    <Button
-                      color="primary"
-                      href="#pablo"
-                      onClick={(e) => e.preventDefault()}
-                      size="sm"
-                    >
-                      Filter
-                    </Button>
-                    <Button
-                      color="primary"
-                      href="#pablo"
-                      onClick={(e) => savedata()}
-                      size="sm"
-                    >
-                      SAVE
-                    </Button>
+                    
                   </div>
                 </Row>
               </CardHeader>

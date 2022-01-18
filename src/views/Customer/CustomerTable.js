@@ -109,31 +109,17 @@ const Customer = (props) => {
   
     
   }
-  async function savedata(index){
-    // tabledata.map((data, index)=> {
-    //  db.collection("Customer").doc(data.ID).update(
-    //   data.tabledata
-    // )
-    // .then(() => {
-    //   NotificationManager.success("Details Saved")
-    //   console.log("Document successfully updated!");
-    // }).catch((error) => {
-    //   NotificationManager.error(error);
-    //       console.error("Error writing document: ", error);
-    //   });
-    // })
-    
+
+    function saveuser(index){
       db.collection("users").doc(tabledata[index].ID).update(
-       tabledata[index].tabledata
-     )
-     .then(() => {
-       NotificationManager.success("Details Saved")
-       console.log("Document successfully updated!");
-     }).catch((error) => {
-       NotificationManager.error(error);
-           console.error("Error writing document: ", error);
-       });
-     
+        tabledata[index].tabledata
+      )
+      .then(() => {
+        console.log("Document successfully updated!");
+      }).catch((error) => {
+            console.error("Error writing document: ", error);
+        });
+      
     }
 
 
@@ -264,14 +250,6 @@ const Customer = (props) => {
         </PopoverBody>
       </Popover>
    </div>
-
-   
-    <Button
-                      color="primary"
-                      size="sm"
-                      onClick={()=>{console.log(tabledata)}}
-                    >State</Button>
-
         <Container className="mt--7" fluid>
         <div className="col">
           
@@ -324,22 +302,6 @@ const Customer = (props) => {
                      sheet="sheet 1"
                      buttonText="Export to excel"
                     />
-                    <Button
-                      color="primary"
-                      href="#pablo"
-                      onClick={(e) => e.preventDefault()}
-                      size="sm"
-                    >
-                      Filter
-                    </Button>
-                    <Button
-                      color="primary"
-                      href="#pablo"
-                      onClick={(e) => savedata()}
-                      size="sm"
-                    >
-                      SAVE
-                    </Button>
                   </div>
                 </Row>
               </CardHeader>
@@ -392,6 +354,7 @@ const Customer = (props) => {
                               let temp = [...tabledata];     // create the copy of state array
                               temp[index].tabledata.status = 'Active';                  //new value
                               settabledata(temp);
+                              saveuser(index);
                             }}
                           >
                             Active
@@ -402,6 +365,7 @@ const Customer = (props) => {
                               let temp = [...tabledata];     // create the copy of state array
                               temp[index].tabledata.status = 'Inactive';                  //new value
                               settabledata(temp);
+                              saveuser(index);
                             }}
                           >
                             Inactive

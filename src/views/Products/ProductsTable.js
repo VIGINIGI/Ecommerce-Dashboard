@@ -142,19 +142,16 @@ const Products= (props) => {
   
     
   }
-  async function savedata(){
-    tabledata.map((data, index)=> {
-     db.collection("Product").doc(data.ID).update(
-      data.tabledata
-    )
-    .then(() => {
-      console.log("Document successfully updated!");
-      NotificationManager.success("Saved");
-    }).catch((error) => {
-          console.error("Error writing document: ", error);
-          NotificationManager.error("Error");
-      });
-    })
+
+    function saveproduct(index){
+      db.collection("Product").doc(tabledata[index].ID).update(
+        tabledata[index].tabledata
+      )
+      .then(() => {
+        console.log("Document successfully updated!");
+      }).catch((error) => {
+            console.error("Error writing document: ", error);
+        });
     }
     function showdetail(index){
       setcurrentindex(index);
@@ -504,27 +501,7 @@ const Products= (props) => {
                      sheet="sheet 1"
                      buttonText="Export to excel"
                     />
-                    
-                   
-
-                    
-                    
-                    <Button 
-                      color="primary"
-                      href="#pablo"
-                      onClick={(e) => e.preventDefault()}
-                      size="sm"
-                    >
-                      Filter
-                    </Button>
-                    <Button 
-                      color="primary"
-                      href="#pablo"
-                      onClick={(e) => savedata()}
-                      size="sm"
-                    >
-                      SAVE
-                    </Button>
+ 
                   </div>
                 </Row>
               </CardHeader>
@@ -585,6 +562,7 @@ const Products= (props) => {
                               let temp = [...tabledata];     // create the copy of state array
                               temp[index].tabledata.status = 'Active';                  //new value
                               settabledata(temp);
+                              saveproduct(index);
                             }}
                           >
                             Active
@@ -595,6 +573,7 @@ const Products= (props) => {
                               let temp = [...tabledata];     // create the copy of state array
                               temp[index].tabledata.status = 'Inactive';                  //new value
                               settabledata(temp);
+                              saveproduct(index);
                             }}
                           >
                             Inactive

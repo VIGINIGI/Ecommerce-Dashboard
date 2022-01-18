@@ -44,7 +44,7 @@ const ProductCategories = (props) => {
   const [newcategory,setcategory]=useState({"CatName":""});
   const [popoveredit, setPopoveredit] = useState(false);
  const togglepopoveredit = () => setPopoveredit(!popoveredit);
-
+ const [currentindex,setcurrentindex]=useState(0);
  //for search 
  var stringSimilarity = require("string-similarity");
  const [search, setsearch]=useState("");
@@ -101,18 +101,6 @@ const ProductCategories = (props) => {
   
     
   }
-  async function savedata(){
-    tabledata.map((data, index)=> {
-     db.collection("ProductCat").doc(data.ID).update(
-      data.tabledata
-    )
-    .then(() => {
-      console.log("Document successfully updated!");
-    }).catch((error) => {
-          console.error("Error writing document: ", error);
-      });
-    })
-    }
     async function del(index){
       db.collection("ProductCat").doc(tabledata[index].ID).delete().then(() => {
         NotificationManager.success("Deleted")
@@ -186,11 +174,6 @@ const ProductCategories = (props) => {
       </Popover>
     </div>
 
-    <Button
-                      color="primary"
-                      size="sm"
-                      onClick={()=>{console.log(tabledata)}}
-                    >State</Button>
 
         <Container className="mt--7" fluid>
         <div className="col">
@@ -240,22 +223,6 @@ const ProductCategories = (props) => {
                      buttonText="Export to excel"
                     />
 
-                    <Button
-                      color="primary"
-                      href="#pablo"
-                      onClick={(e) => e.preventDefault()}
-                      size="sm"
-                    >
-                      Filter
-                    </Button>
-                    <Button
-                      color="primary"
-                      href="#pablo"
-                      onClick={(e) => savedata()}
-                      size="sm"
-                    >
-                      SAVE
-                    </Button>
                   </div>
                 </Row>
               </CardHeader>
@@ -320,7 +287,7 @@ const ProductCategories = (props) => {
                     <ul className="list-inline m-0">
        
         <li className="list-inline-item">
-          <button className="btn btn-success btn-sm rounded-0" type="button" data-toggle="tooltip" data-placement="top" title="Edit" id="Popover2"><i className="fa fa-edit" /></button>
+          <button className="btn btn-success btn-sm rounded-0" type="button" data-toggle="tooltip" data-placement="top" title="Edit" id="Popover2" onClick={()=>{togglepopoveredit();}}><i className="fa fa-edit" /></button>
         </li>
         <li className="list-inline-item">
           <button className="btn btn-danger btn-sm rounded-0" type="button" data-toggle="tooltip" data-placement="top" title="Delete" onClick={()=>{del(index)}}><i className="fa fa-trash" /></button>

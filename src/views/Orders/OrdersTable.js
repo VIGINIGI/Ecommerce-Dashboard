@@ -61,17 +61,17 @@ const Orders = (props) => {
  
   },[]);
 
-  async function savedata(){
-    tabledata.map((data, index)=> {
-     db.collection("Orders").doc(data.ID).update(
-      data.tabledata
-    )
-    .then(() => {
-      console.log("Document successfully updated!");
-    }).catch((error) => {
-          console.error("Error writing document: ", error);
-      });
-    })
+
+    function saveorder(index){
+      db.collection("Orders").doc(tabledata[index].ID).update(
+        tabledata[index].tabledata
+      )
+      .then(() => {
+        console.log("Document successfully updated!");
+      }).catch((error) => {
+            console.error("Error writing document: ", error);
+        });
+      
     }
     async function getdeliveryboy(index){
       setcurrentindex(index);
@@ -241,13 +241,6 @@ const Orders = (props) => {
         </ModalFooter>
       </Modal>
     </div>
-    <Button
-                      color="primary"
-                      size="sm"
-                      onClick={()=>{console.log("table data:",tabledata,"deliveryboydata:",deliveryboydata)}}
-                    >State</Button>
-         
-         
 
         <Container className="mt--7" fluid>
         <div className="col">
@@ -295,22 +288,7 @@ const Orders = (props) => {
                     >
                       Sort
                     </Button>
-                    <Button
-                      color="primary"
-                      href="#pablo"
-                      onClick={(e) => e.preventDefault()}
-                      size="sm"
-                    >
-                      Filter
-                    </Button>
-                    <Button
-                      color="primary"
-                      href="#pablo"
-                      onClick={(e) => savedata()}
-                      size="sm"
-                    >
-                      SAVE
-                    </Button>
+                    
                   </div>
                 </Row>
               </CardHeader>
@@ -365,6 +343,7 @@ const Orders = (props) => {
                               let temp = [...tabledata];     // create the copy of state array
                               temp[index].tabledata.paymentmode = 'Online';                  //new value
                               settabledata(temp);
+                              saveorder(index);
                             }}
                           >
                             Online
@@ -375,6 +354,7 @@ const Orders = (props) => {
                               let temp = [...tabledata];     // create the copy of state array
                               temp[index].tabledata.paymentmode = 'COD';                  //new value
                               settabledata(temp);
+                              saveorder(index);
                             }}
                           >
                             COD
@@ -414,6 +394,7 @@ const Orders = (props) => {
                               let temp = [...tabledata];     // create the copy of state array
                               temp[index].tabledata.status = 'Pending';                  //new value
                               settabledata(temp);
+                              saveorder(index);
                             }}
                           >
                             Pending
@@ -424,6 +405,7 @@ const Orders = (props) => {
                               let temp = [...tabledata];     // create the copy of state array
                               temp[index].tabledata.status = 'Accepted';                  //new value
                               settabledata(temp);
+                              saveorder(index);
                             }}
                           >
                             Accepted
@@ -434,6 +416,7 @@ const Orders = (props) => {
                               let temp = [...tabledata];     // create the copy of state array
                               temp[index].tabledata.status = 'Cancelled';                  //new value
                               settabledata(temp);
+                              saveorder(index);
                             }}
                           >
                             Cancelled

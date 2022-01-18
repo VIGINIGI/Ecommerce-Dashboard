@@ -267,11 +267,12 @@ async function getdeliveryboy(index){
         </ModalFooter>
       </Modal>
     </div>
-    <Button
+    {/* ***************************State Button********************** */}
+    {/* <Button
                       color="primary"
                       size="sm"
                       onClick={()=>{console.log("table data:",tabledata,"deliveryboydata:",deliveryboydata)}}
-                    >State</Button>
+                    >State</Button> */}
         <Container className="mt--7" fluid>
         <div className="col">
           
@@ -307,22 +308,7 @@ async function getdeliveryboy(index){
                      sheet="sheet 1"
                      buttonText="Export to excel"
                     />
-                    <Button
-                      color="primary"
-                      href="#pablo"
-                      onClick={(e) => e.preventDefault()}
-                      size="sm"
-                    >
-                      Filter
-                    </Button>
-                    <Button
-                      color="primary"
-                      href="#pablo"
-                      onClick={(e) => savedata()}
-                      size="sm"
-                    >
-                      SAVE
-                    </Button>
+                    
                   </div>
                 </Row>
               </CardHeader>

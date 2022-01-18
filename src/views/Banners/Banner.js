@@ -190,14 +190,6 @@ import {
                       Add A Banner
                     </Button>
                   
-                    <Button
-                      color="primary"
-                      href="#pablo"
-                      onClick={(e) => e.preventDefault()}
-                      size="sm"
-                    >
-                      Filter
-                    </Button>
                   </div>
                 </Row>
               </CardHeader>

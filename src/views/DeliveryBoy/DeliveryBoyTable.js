@@ -81,7 +81,7 @@ const DeliveryBoy = (props) => {
   console.log(newdeliveryboy);
   newdeliveryboy.orderdelivered=0;
   newdeliveryboy.status="Active";
-  newdeliveryboy.kycstatus="false";
+  newdeliveryboy.isKYC="False";
   newdeliveryboy["Full Name"]="NULL";
   newdeliveryboy.type="DeliveryBoy";
   newdeliveryboy.TotalEarning=0;
@@ -132,18 +132,7 @@ const DeliveryBoy = (props) => {
   
 }
 async function savedata(index){
-  // tabledata.map((data, index)=> {
-  //  db.collection("DeliveryBoy").doc(data.ID).update(
-  //   data.tabledata
-  // )
-  // .then(() => {
-  //   console.log("Document successfully updated!");
-  //   NotificationManager.success("Details Saved");
-  // }).catch((error) => {
-  //       console.error("Error writing document: ", error);
-  //       NotificationManager.error("Error ",error);
-  //   });
-  // })
+
   db.collection("users").doc(tabledata[index].ID).update(
     tabledata[index].tabledata
   )
@@ -155,6 +144,7 @@ async function savedata(index){
         console.error("Error writing document: ", error);
     });
   }
+
 function showdetail(index){
   setcurrentindex(index);
   setModal(!modaldetail);  
@@ -238,6 +228,7 @@ function kycfunction(index){
       togglekyc();
       })
     }).catch((error) => {
+      togglekyc();
       console.error("Error writing document: ", error);
       NotificationManager.error("adhaar image not found");
       setkycdetail({"front":"","back":""});
@@ -302,9 +293,9 @@ return tabledata.length!=0 && delcost!=undefined ? (
           <br></br>
           Aadhar Number:9082654321
           <br></br>
-          Front-Image:<img src={kycdetail.front} alt="Front Image"></img>
+          Front-Image:<img src={kycdetail.front} alt="Front Image Not found"></img>
           <br></br>
-          Back-Image:<img src={kycdetail.back} alt="Back Image"></img>
+          Back-Image:<img src={kycdetail.back} alt="Back Image Not found"></img>
           <br></br>
            </>
         </ModalBody>
@@ -444,26 +435,13 @@ return tabledata.length!=0 && delcost!=undefined ? (
                      sheet="sheet 1"
                      buttonText="Export to excel"
                     />
-                    <Button
-                      color="primary"
-                      href="#pablo"
-                      onClick={(e) => e.preventDefault()}
-                      size="sm"
-                    >
-                      Filter
-                    </Button>
-                    <Button
-                      color="primary"
-                      href="#pablo"
-                      onClick={(e) => savedata()}
-                      size="sm"
-                    >
-                      SAVE
-                    </Button>
+                    
                   </div>
                 </Row>
                 <Row className="align-items-center">
+                <h3 className="mb-0">Delivery Cost :</h3> 
                 <div className="col-3 align-items-right">
+                  
                 <Form role="form" >
                             <FormGroup className="mb-3">
                               <InputGroup className="input-group-alternative">
@@ -534,7 +512,7 @@ return tabledata.length!=0 && delcost!=undefined ? (
                       {data.orderdelivered}
                     </td>
                     <td >
-                    {data.kycstatus==="false"?    
+                    {data.isKYC==="False"?    
                       <Button
                       color="primary"
                       
@@ -569,6 +547,7 @@ return tabledata.length!=0 && delcost!=undefined ? (
                               let temp = [...tabledata];     // create the copy of state array
                               temp[index].tabledata.status = 'Active';                  //new value
                               settabledata(temp);
+                              savedata(index)
                             }}
                           >
                             Active
@@ -580,6 +559,8 @@ return tabledata.length!=0 && delcost!=undefined ? (
                               let temp = [...tabledata];     // create the copy of state array
                               temp[index].tabledata.status = 'Blocked';                  //new value
                               settabledata(temp);
+                              savedata(index)
+
                             }}
                           >
                             Blocked
