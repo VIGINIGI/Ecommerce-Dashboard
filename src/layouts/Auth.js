@@ -24,7 +24,7 @@ import { AuthProvider } from "Context/AuthContext";
 import AuthNavbar from "components/Navbars/AuthNavbar.js";
 
 
-import routes from "routes.js";
+import routes from "routes.js"; 
 
 const Auth = (props) => {
   const mainContent = React.useRef(null);
